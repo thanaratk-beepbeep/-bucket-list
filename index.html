@@ -22,7 +22,6 @@
                 <h1 class="text-3xl font-bold text-indigo-600">🎯 My Bucket List</h1>
                 <p class="text-gray-500 mt-1">จัดอันดับและติดตามสิ่งที่อยากทำ</p>
             </div>
-            <!-- เปลี่ยนปุ่มให้ไปเรียก openAddModal() แทน -->
             <button onclick="openAddModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition transform hover:scale-105 w-full md:w-auto">
                 + เพิ่มรายการใหม่
             </button>
@@ -79,7 +78,6 @@
         <div class="modal-container bg-white w-full max-w-md mx-auto rounded-xl shadow-2xl z-50 overflow-y-auto max-h-[90vh]">
             <div class="modal-content py-4 px-6 text-left">
                 <div class="flex justify-between items-center pb-3 border-b">
-                    <!-- ให้ ID กับ Title เพื่อเปลี่ยนข้อความได้ -->
                     <p class="text-xl font-bold text-gray-800" id="modalTitle">✨ เพิ่มเป้าหมายใหม่</p>
                     <div class="modal-close cursor-pointer z-50" onclick="toggleModal('mainModal')">
                         <span class="text-2xl text-gray-400 hover:text-red-500">&times;</span>
@@ -87,7 +85,6 @@
                 </div>
                 
                 <form id="bucketForm" class="space-y-3 mt-4">
-                    <!-- 🛑 ซ่อน Input สำหรับเก็บ ID ตอนกดแก้ไข -->
                     <input type="hidden" id="editId" value="">
 
                     <div>
@@ -139,6 +136,32 @@
                             <option value="1">🔴 ยากมาก / โอกาสน้อย</option>
                         </select>
                     </div>
+
+                    <!-- 📈 ระบบ Tracking (ใหม่) -->
+                    <div class="bg-blue-50 p-3 rounded-lg border border-blue-100">
+                        <label class="flex items-center space-x-2 text-sm text-blue-800 font-semibold cursor-pointer">
+                            <input type="checkbox" id="itemTracking" class="rounded text-blue-600 focus:ring-blue-500 w-4 h-4">
+                            <span>📈 เปิดระบบติดตามความคืบหน้า (Tracking)</span>
+                        </label>
+                        
+                        <div id="trackingFields" class="hidden space-y-2 mt-3">
+                            <div class="flex gap-2">
+                                <div class="w-1/2">
+                                    <label class="block text-[11px] text-gray-600 uppercase font-bold">เป้าหมายที่จะไปให้ถึง</label>
+                                    <input type="number" id="trackTarget" min="1" class="mt-1 block w-full rounded-md border p-2 text-sm" placeholder="เช่น 100000, 5">
+                                </div>
+                                <div class="w-1/2">
+                                    <label class="block text-[11px] text-gray-600 uppercase font-bold">หน่วยเรียก</label>
+                                    <input type="text" id="trackUnit" class="mt-1 block w-full rounded-md border p-2 text-sm" placeholder="เช่น บาท, คอร์ส, เล่ม">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] text-gray-600 uppercase font-bold">ตอนนี้ทำได้เท่าไรแล้ว?</label>
+                                <input type="number" id="trackCurrent" min="0" class="mt-1 block w-full rounded-md border p-2 text-sm" placeholder="0" value="0">
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="pt-3">
                         <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-2 rounded-lg hover:bg-indigo-700" id="submitBtn">
                             บันทึกเป้าหมาย
@@ -171,6 +194,7 @@
         let allItems = [];
         const unitLabels = { "weeks": "สัปดาห์", "months": "เดือน", "years": "ปี" };
 
+        // Toggle สถานะเวลา TBD
         document.getElementById('itemTBD').addEventListener('change', function() {
             const isChecked = this.checked;
             document.getElementById('timeNumber').disabled = isChecked;
@@ -181,6 +205,21 @@
             } else {
                 document.getElementById('timeNumber').classList.remove('bg-gray-200');
                 document.getElementById('timeUnit').classList.remove('bg-gray-200');
+            }
+        });
+
+        // Toggle แสดงช่องกรอก Tracking
+        document.getElementById('itemTracking').addEventListener('change', function() {
+            const trackFields = document.getElementById('trackingFields');
+            if(this.checked) {
+                trackFields.classList.remove('hidden');
+                // ถ้าช่องเป้าหมายว่าง ให้ดึงตัวเลขจากงบประมาณมาใส่เป็นค่าตั้งต้นเผื่อไว้
+                if(!document.getElementById('trackTarget').value) {
+                    document.getElementById('trackTarget').value = document.getElementById('itemPrice').value || 1;
+                    document.getElementById('trackUnit').value = 'บาท';
+                }
+            } else {
+                trackFields.classList.add('hidden');
             }
         });
 
@@ -198,10 +237,10 @@
             try {
                 const querySnapshot = await getDocs(colRef);
                 allItems = [];
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
                     data.daysLeft = calculateDaysLeft(data.createdAt, data.calculatedDays, data.isTBD);
-                    allItems.push({ id: doc.id, ...data });
+                    allItems.push({ id: docSnap.id, ...data });
                 });
                 renderItems();
             } catch (error) {
@@ -271,6 +310,7 @@
                 const score = (Number(item.necessity) * 2) + (Number(item.impact) * 2) + urgency + Number(item.possibility);
                 const isDone = item.isCompleted;
 
+                // 🎨 UI ป้ายเตือน
                 let badgeHtml = '';
                 if (!item.isTBD && !isDone) {
                     if (item.daysLeft < 0) {
@@ -288,6 +328,27 @@
 
                 const targetText = item.isTBD ? "ยังไม่มีกำหนด" : `ภายใน ${item.timeNumber} ${unitLabels[item.timeUnit]}`;
 
+                // 📈 UI แถบ Tracking
+                let trackingHtml = '';
+                if (item.isTracking && item.trackTarget > 0) {
+                    // คำนวณเปอร์เซ็นต์ (ไม่ให้เกิน 100%)
+                    let percent = Math.min((item.trackCurrent / item.trackTarget) * 100, 100).toFixed(0);
+                    let barColor = percent >= 100 ? 'bg-green-500' : 'bg-blue-500';
+
+                    trackingHtml = `
+                        <div class="mt-3 bg-gray-50 p-2.5 rounded-lg border border-gray-100">
+                            <div class="flex justify-between items-end mb-1">
+                                <span class="text-[11px] text-gray-500 font-bold uppercase tracking-wider">ความคืบหน้า</span>
+                                <span class="text-xs font-bold text-gray-700">${Number(item.trackCurrent).toLocaleString()} / ${Number(item.trackTarget).toLocaleString()} <span class="text-gray-500 font-normal">${item.trackUnit}</span> (${percent}%)</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="${barColor} h-2 rounded-full transition-all duration-500" style="width: ${percent}%"></div>
+                            </div>
+                            ${!isDone ? `<button onclick="promptQuickUpdate('${item.id}',${item.trackCurrent})" class="text-[10px] text-blue-600 hover:text-blue-800 font-bold mt-2 flex items-center gap-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg> อัปเดตความคืบหน้า</button>` : ''}
+                        </div>
+                    `;
+                }
+
                 const card = `
                     <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition p-5 border-l-4 ${isDone ? 'border-gray-400 completed-item' : (index === 0 && statusFilter === 'pending' ? 'border-yellow-400' : 'border-indigo-400')} relative flex flex-col h-full">
                         ${!isDone && index === 0 && statusFilter === 'pending' ? '<span class="absolute -top-3 -right-3 text-3xl">👑</span>' : ''}
@@ -300,13 +361,15 @@
                             </div>
                         </div>
                         
-                        <div class="text-sm text-gray-600 space-y-1 mb-4 flex-grow">
+                        <div class="text-sm text-gray-600 space-y-1 mb-2 flex-grow">
                             <p class="text-[12px] text-gray-400">เป้าหมาย: ${targetText}</p>
                             <p class="mt-1">💰 งบประมาณ: <span class="font-medium text-green-600">฿${Number(item.price).toLocaleString()}</span></p>
                         </div>
                         
-                        <!-- 🛠 เพิ่มปุ่ม "แก้ไข" เข้ามาตรงนี้ -->
-                        <div class="mt-auto border-t pt-3 flex justify-between items-center">
+                        ${trackingHtml}
+                        
+                        <!-- Actions -->
+                        <div class="mt-auto border-t pt-3 mt-4 flex justify-between items-center">
                             <div class="flex gap-4">
                                 <button onclick="openEditModal('${item.id}')" class="text-xs text-blue-500 hover:text-blue-700 font-medium flex items-center gap-1">
                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg> แก้ไข
@@ -326,21 +389,37 @@
 
         // ------------------ Actions ------------------
 
-        // ฟังก์ชันเมื่อกดปุ่ม "+ เพิ่มรายการใหม่" (เคลียร์ฟอร์มให้ว่าง)
+        // Pop-up อัปเดตตัวเลขความคืบหน้าอย่างรวดเร็ว (ไม่ต้องเข้าหน้าแก้ไข)
+        window.promptQuickUpdate = async function(id, currentVal) {
+            const newVal = prompt("อัปเดตตัวเลขความคืบหน้าล่าสุดของคุณ:", currentVal);
+            if (newVal !== null && newVal !== "" && !isNaN(newVal)) {
+                try {
+                    await updateDoc(doc(db, "bucketlist", id), { trackCurrent: Number(newVal) });
+                    loadItemsFromDB(); // โหลดใหม่เพื่อให้หลอด Progress ขยับ
+                } catch (error) {
+                    console.error("Error updating progress:", error);
+                }
+            }
+        };
+
         window.openAddModal = function() {
             document.getElementById('bucketForm').reset();
-            document.getElementById('editId').value = ""; // เคลียร์ ID
+            document.getElementById('editId').value = ""; 
             document.getElementById('modalTitle').innerText = "✨ เพิ่มเป้าหมายใหม่";
+            
+            // รีเซ็ตปุ่ม Toggle ต่างๆ
             document.getElementById('itemTBD').dispatchEvent(new Event('change'));
+            document.getElementById('itemTracking').checked = false;
+            document.getElementById('itemTracking').dispatchEvent(new Event('change'));
+            
             toggleModal('mainModal');
         }
 
-        // ฟังก์ชันเมื่อกดปุ่ม "แก้ไข" (ดึงข้อมูลเก่ามาใส่ฟอร์ม)
         window.openEditModal = function(id) {
             const item = allItems.find(i => i.id === id);
             if(!item) return;
 
-            document.getElementById('editId').value = item.id; // ซ่อน ID ไว้รู้ว่ากำลังแก้
+            document.getElementById('editId').value = item.id;
             document.getElementById('modalTitle').innerText = "✏️ แก้ไขเป้าหมาย";
 
             document.getElementById('itemName').value = item.name;
@@ -352,14 +431,19 @@
             document.getElementById('itemTBD').checked = item.isTBD;
             document.getElementById('timeNumber').value = item.timeNumber;
             document.getElementById('timeUnit').value = item.timeUnit;
-            
-            // สั่งให้อัปเดตสถานะช่องกรอกเวลา
             document.getElementById('itemTBD').dispatchEvent(new Event('change'));
+
+            // โหลดข้อมูล Tracking
+            const isTracking = item.isTracking || false;
+            document.getElementById('itemTracking').checked = isTracking;
+            document.getElementById('trackTarget').value = item.trackTarget || "";
+            document.getElementById('trackUnit').value = item.trackUnit || "";
+            document.getElementById('trackCurrent').value = item.trackCurrent || 0;
+            document.getElementById('itemTracking').dispatchEvent(new Event('change'));
 
             toggleModal('mainModal');
         }
 
-        // ฟังก์ชันบันทึกข้อมูล (ใช้ร่วมกันทั้ง เพิ่มใหม่ และ แก้ไข)
         document.getElementById('bucketForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
@@ -369,6 +453,12 @@
             const isTBD = document.getElementById('itemTBD').checked;
             const tNumber = Number(document.getElementById('timeNumber').value);
             const tUnit = document.getElementById('timeUnit').value;
+            
+            // ข้อมูล Tracking
+            const isTracking = document.getElementById('itemTracking').checked;
+            const trackTarget = isTracking ? Number(document.getElementById('trackTarget').value) : 0;
+            const trackUnit = isTracking ? document.getElementById('trackUnit').value : "";
+            const trackCurrent = isTracking ? Number(document.getElementById('trackCurrent').value) : 0;
             
             let calculatedDays = 0;
             if(!isTBD) {
@@ -386,15 +476,17 @@
                 timeNumber: tNumber,
                 timeUnit: tUnit,
                 isTBD: isTBD,
-                calculatedDays: calculatedDays
+                calculatedDays: calculatedDays,
+                isTracking: isTracking,
+                trackTarget: trackTarget,
+                trackUnit: trackUnit,
+                trackCurrent: trackCurrent
             };
 
             try {
                 if (editId) {
-                    // โหมดแก้ไข: อัปเดตข้อมูลเดิม (ไม่แก้ createdAt)
                     await updateDoc(doc(db, "bucketlist", editId), data);
                 } else {
-                    // โหมดเพิ่มใหม่: ใส่ค่าตั้งต้นเพิ่มเติม
                     data.isCompleted = false;
                     data.createdAt = new Date().toISOString();
                     await addDoc(colRef, data);
