@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Smart Bucket List & Tracker</title>
+    <title>My Smart Tracker</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap');
@@ -11,11 +11,6 @@
         .modal { transition: opacity 0.25s ease; }
         body.modal-active { overflow-x: hidden; overflow-y: hidden !important; }
         .completed-item { opacity: 0.6; filter: grayscale(100%); }
-        @keyframes popIn {
-            0% { transform: scale(0.8); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        .animate-pop { animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
     </style>
 </head>
 <body class="text-gray-800 antialiased">
@@ -25,14 +20,13 @@
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
             <div>
                 <h1 class="text-3xl font-bold text-indigo-600">🎯 All-in-One Tracker</h1>
-                <p class="text-gray-500 mt-1">เป้าหมาย, การเงิน และสิ่งที่ต้องทำ</p>
+                <p class="text-gray-500 mt-1">จัดการ Bucket List และ To-Do List ในที่เดียว</p>
             </div>
             <button onclick="openAddModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition transform hover:scale-105 w-full md:w-auto">
                 + เพิ่มรายการใหม่
             </button>
         </div>
 
-        <!-- 📊 Statistics Section -->
         <div class="grid grid-cols-3 gap-4 mb-8">
             <div class="bg-white rounded-xl shadow-sm p-4 text-center border-b-4 border-indigo-400">
                 <p class="text-xs md:text-sm text-gray-500 font-semibold">เป้าหมายทั้งหมด</p>
@@ -48,64 +42,28 @@
             </div>
         </div>
 
-        <!-- 🔍 Filters & Quick Win Section -->
-        <div class="bg-white p-4 rounded-xl shadow-sm mb-6">
-            <div class="flex flex-col md:flex-row gap-4">
-                <div class="flex-1">
-                    <label class="block text-xs font-medium text-gray-500 mb-1">สถานะ</label>
-                    <select id="filterStatus" onchange="renderItems()" class="w-full rounded-md border-gray-300 shadow-sm border p-2 text-sm focus:border-indigo-500">
-                        <option value="all">แสดงทั้งหมด</option>
-                        <option value="pending" selected>⏳ รอทำ (ยังไม่สำเร็จ)</option>
-                        <option value="completed">✅ สำเร็จแล้ว</option>
-                    </select>
-                </div>
-                <div class="flex-1">
-                    <label class="block text-xs font-medium text-gray-500 mb-1">ช่วงเวลาที่เหลือ</label>
-                    <select id="filterTimeframe" onchange="renderItems()" class="w-full rounded-md border-gray-300 shadow-sm border p-2 text-sm focus:border-indigo-500">
-                        <option value="all">ทุกช่วงเวลา</option>
-                        <option value="urgent">⏰ โค้งสุดท้าย / เลยกำหนด (< 14 วัน)</option>
-                        <option value="short">ระยะสั้น (เหลือ < 3 เดือน)</option>
-                        <option value="medium">ระยะกลาง (เหลือ < 1 ปี)</option>
-                        <option value="long">ระยะยาว (เหลือ > 1 ปี)</option>
-                        <option value="tbd">รอเหตุการณ์ (TBD)</option>
-                    </select>
-                </div>
+        <div class="bg-white p-4 rounded-xl shadow-sm mb-6 flex flex-col md:flex-row gap-4">
+            <div class="flex-1">
+                <label class="block text-xs font-medium text-gray-500 mb-1">หมวดหมู่</label>
+                <select id="filterType" onchange="renderItems()" class="w-full rounded-md border-gray-300 shadow-sm border p-2 text-sm focus:border-indigo-500">
+                    <option value="all">แสดงทั้งหมด</option>
+                    <option value="bucket">🌟 เฉพาะ Bucket List</option>
+                    <option value="todo">✅ เฉพาะ To-Do List</option>
+                </select>
             </div>
-            
-            <div class="mt-4 pt-4 border-t border-gray-100 flex justify-center">
-                <button onclick="suggestQuickWin()" class="bg-gradient-to-r from-pink-500 to-orange-400 hover:from-pink-600 hover:to-orange-500 text-white font-bold py-2 px-6 rounded-full shadow-md transition transform hover:scale-105 flex items-center gap-2">
-                    <span class="text-xl">🪄</span> ต้องการ Heal ใจ (สุ่มเป้าหมายเล็กๆ)
-                </button>
+            <div class="flex-1">
+                <label class="block text-xs font-medium text-gray-500 mb-1">สถานะ</label>
+                <select id="filterStatus" onchange="renderItems()" class="w-full rounded-md border-gray-300 shadow-sm border p-2 text-sm focus:border-indigo-500">
+                    <option value="all">แสดงทั้งหมด</option>
+                    <option value="pending" selected>⏳ รอทำ (ยังไม่สำเร็จ)</option>
+                    <option value="completed">✅ สำเร็จแล้ว</option>
+                </select>
             </div>
         </div>
 
-        <!-- 📝 พื้นที่แสดง Bucket List -->
+        <!-- พื้นที่แสดงข้อมูล -->
         <div id="bucketListContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="col-span-full text-center py-10 text-gray-400" id="loadingText">กำลังโหลดข้อมูล...</div>
-        </div>
-    </div>
-
-    <!-- 🌟 Modal สำหรับ Quick Win Suggestion -->
-    <div class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-[60] px-4" id="quickWinModal">
-        <div class="modal-overlay absolute w-full h-full bg-black opacity-60 backdrop-blur-sm" onclick="toggleModal('quickWinModal')"></div>
-        <div class="modal-container bg-white w-full max-w-sm mx-auto rounded-2xl shadow-2xl z-[60] animate-pop">
-            <div class="p-6 text-center">
-                <div class="text-5xl mb-4">🎁</div>
-                <h3 class="text-2xl font-bold text-gray-800 mb-2">ทำสิ่งนี้ดูสิ!</h3>
-                <p class="text-sm text-gray-500 mb-6">เป้าหมายเล็กๆ ที่ทำได้ง่ายและใช้เงินน้อย</p>
-                <div class="bg-gradient-to-br from-pink-50 to-orange-50 p-5 rounded-xl border border-pink-100 mb-6">
-                    <h4 id="qwName" class="text-xl font-bold text-pink-600 mb-2 leading-tight">ชื่อเป้าหมาย</h4>
-                    <div class="flex justify-center gap-4 text-sm font-medium text-gray-600">
-                        <span id="qwPrice">💰 ฿0</span><span>🟢 ทำได้ง่าย</span>
-                    </div>
-                </div>
-                <div class="flex flex-col gap-3">
-                    <button onclick="doQuickWinNow()" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-4 rounded-xl shadow transition w-full">✅ ฉันจะทำสิ่งนี้แหละ!</button>
-                    <button onclick="suggestQuickWin()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-xl transition w-full">🎲 ขออันอื่น</button>
-                    <button onclick="toggleModal('quickWinModal')" class="text-gray-400 hover:text-gray-600 text-sm mt-2">ปิดหน้าต่างนี้</button>
-                </div>
-                <input type="hidden" id="qwCurrentId" value="">
-            </div>
         </div>
     </div>
 
@@ -115,7 +73,7 @@
         <div class="modal-container bg-white w-full max-w-md mx-auto rounded-xl shadow-2xl z-50 overflow-y-auto max-h-[90vh]">
             <div class="modal-content py-4 px-6 text-left">
                 <div class="flex justify-between items-center pb-3 border-b">
-                    <p class="text-xl font-bold text-gray-800" id="modalTitle">✨ เพิ่มเป้าหมายใหม่</p>
+                    <p class="text-xl font-bold text-gray-800" id="modalTitle">✨ เพิ่มรายการใหม่</p>
                     <div class="modal-close cursor-pointer z-50" onclick="toggleModal('mainModal')">
                         <span class="text-2xl text-gray-400 hover:text-red-500">&times;</span>
                     </div>
@@ -124,12 +82,28 @@
                 <form id="bucketForm" class="space-y-3 mt-4">
                     <input type="hidden" id="editId" value="">
 
+                    <!-- 🛑 ตัวเลือกประเภท (ใหม่) -->
+                    <div class="bg-indigo-50 p-2 rounded-lg border border-indigo-100 flex gap-2">
+                        <label class="flex-1 text-center cursor-pointer">
+                            <input type="radio" name="itemType" value="bucket" class="peer hidden" checked>
+                            <div class="peer-checked:bg-indigo-600 peer-checked:text-white bg-white text-gray-600 py-2 rounded-md font-medium text-sm transition shadow-sm">
+                                🌟 Bucket List
+                            </div>
+                        </label>
+                        <label class="flex-1 text-center cursor-pointer">
+                            <input type="radio" name="itemType" value="todo" class="peer hidden">
+                            <div class="peer-checked:bg-indigo-600 peer-checked:text-white bg-white text-gray-600 py-2 rounded-md font-medium text-sm transition shadow-sm">
+                                ✅ To-Do List
+                            </div>
+                        </label>
+                    </div>
+
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">1. สิ่งที่อยากทำ</label>
+                        <label class="block text-sm font-medium text-gray-700">1. สิ่งที่อยากทำ / งานที่ต้องทำ</label>
                         <input type="text" id="itemName" required class="mt-1 block w-full rounded-md border p-2 text-sm">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">2. ราคา/งบประมาณ (บาท)</label>
+                        <label class="block text-sm font-medium text-gray-700">2. งบประมาณที่ใช้ (บาท)</label>
                         <input type="number" id="itemPrice" required min="0" class="mt-1 block w-full rounded-md border p-2 text-sm" placeholder="0 = ฟรี">
                     </div>
                     
@@ -152,10 +126,11 @@
                         </div>
                     </div>
                     
-                    <div class="bg-gray-50 p-3 rounded-lg border">
+                    <!-- โซน Bucket List (ระยะเวลา) -->
+                    <div id="bucketTimeContainer" class="bg-gray-50 p-3 rounded-lg border">
                         <label class="block text-sm font-medium text-gray-700 mb-1">5. ระยะเวลาที่คาดหวัง</label>
                         <div class="flex space-x-2">
-                            <input type="number" id="timeNumber" min="1" value="1" class="w-1/2 rounded-md border p-2 text-sm focus:border-indigo-500" placeholder="ระบุตัวเลข">
+                            <input type="number" id="timeNumber" min="1" value="1" class="w-1/2 rounded-md border p-2 text-sm focus:border-indigo-500">
                             <select id="timeUnit" class="w-1/2 rounded-md border p-2 text-sm focus:border-indigo-500">
                                 <option value="weeks">สัปดาห์</option>
                                 <option value="months">เดือน</option>
@@ -164,8 +139,25 @@
                         </div>
                         <label class="flex items-center space-x-2 text-sm text-gray-600 mt-3 cursor-pointer">
                             <input type="checkbox" id="itemTBD" class="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4">
-                            <span class="font-medium text-orange-600">ยังไม่มีกำหนด (TBD / รอเหตุการณ์)</span>
+                            <span class="font-medium text-orange-600">ยังไม่มีกำหนด (TBD)</span>
                         </label>
+                    </div>
+
+                    <!-- โซน To-Do List (วันที่และเวลาชัดเจน) ซ่อนไว้ก่อน -->
+                    <div id="todoTimeContainer" class="bg-green-50 p-3 rounded-lg border border-green-100 hidden">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">5. กำหนดเวลาที่แน่นอน (To-Do)</label>
+                        <input type="date" id="todoDate" class="mt-1 block w-full rounded-md border p-2 text-sm focus:border-green-500 mb-2">
+                        <div class="flex items-center gap-2">
+                            <div class="w-1/2">
+                                <label class="block text-[11px] text-gray-500 font-bold">เวลาเริ่ม</label>
+                                <input type="time" id="todoStartTime" class="mt-1 block w-full rounded-md border p-2 text-sm focus:border-green-500">
+                            </div>
+                            <span class="mt-4">-</span>
+                            <div class="w-1/2">
+                                <label class="block text-[11px] text-gray-500 font-bold">เวลาเสร็จ</label>
+                                <input type="time" id="todoEndTime" class="mt-1 block w-full rounded-md border p-2 text-sm focus:border-green-500">
+                            </div>
+                        </div>
                     </div>
 
                     <div>
@@ -177,49 +169,9 @@
                         </select>
                     </div>
 
-                    <div class="bg-blue-50 p-3 rounded-lg border border-blue-100">
-                        <label class="flex items-center space-x-2 text-sm text-blue-800 font-semibold cursor-pointer mb-2">
-                            <input type="checkbox" id="itemTracking" class="rounded text-blue-600 focus:ring-blue-500 w-4 h-4">
-                            <span>📈 เปิดระบบติดตามความคืบหน้า</span>
-                        </label>
-                        
-                        <div id="trackingFields" class="hidden space-y-3 border-t border-blue-200 pt-2">
-                            <div>
-                                <label class="block text-[11px] text-gray-600 uppercase font-bold">รูปแบบการติดตาม</label>
-                                <select id="trackType" class="mt-1 block w-full rounded-md border p-2 text-sm bg-white">
-                                    <option value="numeric">📊 แบบตัวเลข (เช่น เก็บเงิน, หน่วยกิต)</option>
-                                    <option value="checklist">✅ แบบขั้นตอนย่อย (เช่น ระดับชั้น, แพลนทริป)</option>
-                                </select>
-                            </div>
-
-                            <div id="trackNumericFields" class="space-y-2">
-                                <div class="flex gap-2">
-                                    <div class="w-1/2">
-                                        <label class="block text-[11px] text-gray-600 uppercase font-bold">เป้าหมายตัวเลข</label>
-                                        <input type="number" id="trackTarget" min="1" class="mt-1 block w-full rounded-md border p-2 text-sm" placeholder="100000">
-                                    </div>
-                                    <div class="w-1/2">
-                                        <label class="block text-[11px] text-gray-600 uppercase font-bold">หน่วยเรียก</label>
-                                        <input type="text" id="trackUnit" class="mt-1 block w-full rounded-md border p-2 text-sm" placeholder="บาท, หน่วยกิต">
-                                    </div>
-                                </div>
-                                <div>
-                                    <label class="block text-[11px] text-gray-600 uppercase font-bold">ปัจจุบันทำได้ (เริ่มต้น)</label>
-                                    <input type="number" id="trackCurrent" min="0" class="mt-1 block w-full rounded-md border p-2 text-sm" value="0">
-                                </div>
-                            </div>
-
-                            <div id="trackChecklistFields" class="hidden space-y-2">
-                                <label class="block text-[11px] text-gray-600 uppercase font-bold">รายการขั้นตอน / Milestones</label>
-                                <ul id="checklistContainer" class="space-y-2"></ul>
-                                <button type="button" onclick="addChecklistItem()" class="text-xs text-blue-600 hover:text-blue-800 font-bold bg-white border border-blue-200 rounded px-3 py-1 mt-1 w-full text-center">+ เพิ่มขั้นตอน</button>
-                            </div>
-                        </div>
-                    </div>
-
                     <div class="pt-3">
                         <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-2 rounded-lg hover:bg-indigo-700" id="submitBtn">
-                            บันทึกเป้าหมาย
+                            บันทึกข้อมูล
                         </button>
                     </div>
                 </form>
@@ -232,14 +184,13 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // 🛑 🛑 วาง CONFIG FIREBASE ของคุณตรงนี้ 🛑 🛑
+        // 🛑 วาง CONFIG FIREBASE ของคุณตรงนี้
         const firebaseConfig = {
             apiKey: "AIzaSyBRw1lZxzzZSZ5jCSYOGuQ0W3XF_nG0FcU",
             authDomain: "bucketlist-b78bb.firebaseapp.com",
             projectId: "bucketlist-b78bb",
             storageBucket: "bucketlist-b78bb.firebasestorage.app",
             messagingSenderId: "130123297398",
-            appId: "1:130123297398:web:6ec6af77741e1dc770e557",
             measurementId: "G-0KMEHK4MKQ"
         };
 
@@ -247,89 +198,45 @@
         const db = getFirestore(app);
         const colRef = collection(db, "bucketlist");
 
-        // 🛑 ลิงก์ API สำหรับปัก Calendar 🛑
+        // 🛑 ลิงก์ API GAS
         const GAS_CALENDAR_URL = "https://script.google.com/macros/s/AKfycbzwuQltKiLAoCHfDE86csfw9lSAT3Wz5VIGEO-CH3Kop5_h9nWePkE8rW0F353VL3vE/exec";
 
         let allItems = [];
         const unitLabels = { "weeks": "สัปดาห์", "months": "เดือน", "years": "ปี" };
 
-        // ------------------ Quick Win Feature ------------------
-        window.suggestQuickWin = function() {
-            const quickWins = allItems.filter(item => !item.isCompleted && Number(item.possibility) === 3 && Number(item.price) <= 1000);
-            if (quickWins.length === 0) {
-                alert("ว้าก! ตอนนี้ไม่มีเป้าหมายแบบทำได้ง่ายๆ หรือใช้งบน้อยๆ เลยครับ ลองเพิ่มเป้าหมายเล็กๆ ดูสิครับ");
-                return;
-            }
-            const luckyItem = quickWins[Math.floor(Math.random() * quickWins.length)];
-            document.getElementById('qwName').innerText = luckyItem.name;
-            document.getElementById('qwPrice').innerText = `💰 ฿${Number(luckyItem.price).toLocaleString()}`;
-            document.getElementById('qwCurrentId').value = luckyItem.id;
-            if (document.getElementById('quickWinModal').classList.contains('opacity-0')) toggleModal('quickWinModal');
-        };
-
-        window.doQuickWinNow = async function() {
-            const id = document.getElementById('qwCurrentId').value;
-            if(!id) return;
-            try {
-                await updateDoc(doc(db, "bucketlist", id), { isCompleted: true });
-                toggleModal('quickWinModal');
-                setTimeout(() => { alert("เก่งมากครับ! 🎉 ขอให้มีความสุขกับรางวัลเล็กๆ ชิ้นนี้นะครับ"); loadItemsFromDB(); }, 300);
-            } catch (error) { console.error(error); }
-        };
-
         // ------------------ UI Event Listeners ------------------
+        
+        // สลับโหมดการกรอก Bucket vs To-do
+        document.querySelectorAll('input[name="itemType"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.value === 'todo') {
+                    document.getElementById('bucketTimeContainer').classList.add('hidden');
+                    document.getElementById('todoTimeContainer').classList.remove('hidden');
+                } else {
+                    document.getElementById('bucketTimeContainer').classList.remove('hidden');
+                    document.getElementById('todoTimeContainer').classList.add('hidden');
+                }
+            });
+        });
+
         document.getElementById('itemTBD').addEventListener('change', function() {
             const isChecked = this.checked;
             document.getElementById('timeNumber').disabled = isChecked;
             document.getElementById('timeUnit').disabled = isChecked;
-            if(isChecked) {
-                document.getElementById('timeNumber').classList.add('bg-gray-200');
-                document.getElementById('timeUnit').classList.add('bg-gray-200');
-            } else {
-                document.getElementById('timeNumber').classList.remove('bg-gray-200');
-                document.getElementById('timeUnit').classList.remove('bg-gray-200');
-            }
         });
-
-        document.getElementById('itemTracking').addEventListener('change', function() {
-            const trackFields = document.getElementById('trackingFields');
-            if(this.checked) {
-                trackFields.classList.remove('hidden');
-                if(!document.getElementById('trackTarget').value) {
-                    document.getElementById('trackTarget').value = document.getElementById('itemPrice').value || 1;
-                    document.getElementById('trackUnit').value = 'บาท';
-                }
-                if(document.getElementById('checklistContainer').children.length === 0) addChecklistItem();
-            } else trackFields.classList.add('hidden');
-        });
-
-        document.getElementById('trackType').addEventListener('change', function() {
-            if(this.value === 'numeric') {
-                document.getElementById('trackNumericFields').classList.remove('hidden');
-                document.getElementById('trackChecklistFields').classList.add('hidden');
-            } else {
-                document.getElementById('trackNumericFields').classList.add('hidden');
-                document.getElementById('trackChecklistFields').classList.remove('hidden');
-            }
-        });
-
-        window.addChecklistItem = function(text = '', isDone = false) {
-            const container = document.getElementById('checklistContainer');
-            const li = document.createElement('li');
-            li.className = 'flex gap-2 items-center';
-            li.innerHTML = `
-                <input type="checkbox" class="chk-status rounded text-blue-500 w-4 h-4 cursor-pointer" ${isDone ? 'checked' : ''}>
-                <input type="text" class="chk-text w-full text-sm border border-gray-300 rounded p-1.5 focus:border-blue-500" value="${text}" placeholder="เช่น ผ่าน N5, จองโรงแรม...">
-                <button type="button" onclick="this.parentElement.remove()" class="text-gray-400 hover:text-red-500 font-bold text-lg">&times;</button>
-            `;
-            container.appendChild(li);
-        };
 
         // ------------------ Core Logic ------------------
-        function calculateDaysLeft(createdAt, calculatedDays, isTBD) {
-            if (isTBD) return Infinity;
-            const diffTime = new Date(new Date(createdAt).getTime() + (calculatedDays * 24 * 60 * 60 * 1000)) - new Date();
-            return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
+        function calculateDaysLeft(createdAt, calculatedDays, isTBD, specificDate, itemType) {
+            if (itemType === 'todo') {
+                if(!specificDate) return Infinity;
+                const diffTime = new Date(specificDate) - new Date();
+                return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            } else {
+                if (isTBD) return Infinity;
+                const diffTime = new Date(new Date(createdAt).getTime() + (calculatedDays * 24 * 60 * 60 * 1000)) - new Date();
+                return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            }
         }
 
         async function loadItemsFromDB() {
@@ -338,51 +245,34 @@
                 allItems = [];
                 querySnapshot.forEach((docSnap) => {
                     const data = docSnap.data();
-                    data.daysLeft = calculateDaysLeft(data.createdAt, data.calculatedDays, data.isTBD);
+                    data.daysLeft = calculateDaysLeft(data.createdAt, data.calculatedDays, data.isTBD, data.specificDate, data.itemType);
                     allItems.push({ id: docSnap.id, ...data });
                 });
                 renderItems();
             } catch (error) {
+                console.error(error);
                 document.getElementById('bucketListContainer').innerHTML = '<div class="col-span-full text-center text-red-500 py-10">เชื่อมต่อฐานข้อมูลล้มเหลว</div>';
             }
-        }
-
-        function getUrgencyScore(isTBD, daysLeft) {
-            if(isTBD) return 0;
-            if(daysLeft <= 14) return 5;
-            if(daysLeft <= 30) return 4;
-            if(daysLeft <= 90) return 3;
-            if(daysLeft <= 365) return 2;
-            return 1;
         }
 
         window.renderItems = function() {
             const container = document.getElementById('bucketListContainer');
             const statusFilter = document.getElementById('filterStatus').value;
-            const timeFilter = document.getElementById('filterTimeframe').value;
+            const typeFilter = document.getElementById('filterType').value;
 
             let filteredItems = allItems.filter(item => {
                 const matchStatus = statusFilter === 'all' || 
                                    (statusFilter === 'completed' && item.isCompleted) || 
                                    (statusFilter === 'pending' && !item.isCompleted);
-                
-                let matchTime = true;
-                if(timeFilter === 'urgent') matchTime = !item.isTBD && item.daysLeft <= 14;
-                else if(timeFilter === 'short') matchTime = !item.isTBD && item.daysLeft <= 90;
-                else if(timeFilter === 'medium') matchTime = !item.isTBD && item.daysLeft > 90 && item.daysLeft <= 365;
-                else if(timeFilter === 'long') matchTime = !item.isTBD && item.daysLeft > 365;
-                else if(timeFilter === 'tbd') matchTime = item.isTBD === true;
-                
-                return matchStatus && matchTime;
+                const matchType = typeFilter === 'all' || item.itemType === typeFilter;
+                return matchStatus && matchType;
             });
 
             filteredItems.sort((a, b) => {
-                const scoreA = (Number(a.necessity) * 2) + (Number(a.impact) * 2) + getUrgencyScore(a.isTBD, a.daysLeft) + Number(a.possibility);
-                const scoreB = (Number(b.necessity) * 2) + (Number(b.impact) * 2) + getUrgencyScore(b.isTBD, b.daysLeft) + Number(b.possibility);
-
-                if (scoreA !== scoreB) return scoreB - scoreA;
-                if (a.price !== b.price) return Number(a.price) - Number(b.price);
-                return (a.isTBD ? Infinity : a.daysLeft) - (b.isTBD ? Infinity : b.daysLeft); 
+                // เอางาน To-Do ที่ระบุวันเวลาชัดเจนขึ้นก่อน
+                const daysA = a.isTBD ? Infinity : a.daysLeft;
+                const daysB = b.isTBD ? Infinity : b.daysLeft;
+                return daysA - daysB; 
             });
 
             document.getElementById('statTotal').innerText = allItems.length;
@@ -391,107 +281,55 @@
 
             container.innerHTML = '';
             if(filteredItems.length === 0) {
-                container.innerHTML = '<div class="col-span-full text-center py-10 text-gray-500 bg-white rounded-xl shadow-sm">ไม่พบเป้าหมายในหมวดหมู่นี้</div>';
+                container.innerHTML = '<div class="col-span-full text-center py-10 text-gray-500 bg-white rounded-xl shadow-sm">ไม่พบข้อมูลในหมวดหมู่นี้</div>';
                 return;
             }
 
-            filteredItems.forEach((item, index) => {
-                const score = (Number(item.necessity) * 2) + (Number(item.impact) * 2) + getUrgencyScore(item.isTBD, item.daysLeft) + Number(item.possibility);
+            filteredItems.forEach((item) => {
                 const isDone = item.isCompleted;
 
+                // Badge เตือนเวลา
                 let badgeHtml = '';
                 if (!item.isTBD && !isDone) {
-                    if (item.daysLeft < 0) badgeHtml = `<span class="bg-red-100 text-red-700 text-[10px] px-2 py-1 rounded-full font-bold shadow-sm animate-pulse">🚨 เลยกำหนด ${Math.abs(item.daysLeft)} วัน</span>`;
-                    else if (item.daysLeft <= 14) badgeHtml = `<span class="bg-orange-100 text-orange-700 text-[10px] px-2 py-1 rounded-full font-bold shadow-sm">⏰ เหลือ ${item.daysLeft} วัน</span>`;
-                    else badgeHtml = `<span class="bg-blue-50 text-blue-600 text-[10px] px-2 py-1 rounded-full font-medium border border-blue-100">📅 เหลือ ${item.daysLeft} วัน</span>`;
+                    if (item.daysLeft < 0) badgeHtml = `<span class="bg-red-100 text-red-700 text-[10px] px-2 py-1 rounded-full font-bold shadow-sm">🚨 เลยกำหนด</span>`;
+                    else if (item.daysLeft === 0) badgeHtml = `<span class="bg-orange-100 text-orange-700 text-[10px] px-2 py-1 rounded-full font-bold shadow-sm">⏰ วันนี้!</span>`;
+                    else badgeHtml = `<span class="bg-blue-50 text-blue-600 text-[10px] px-2 py-1 rounded-full font-medium">เหลือ ${item.daysLeft} วัน</span>`;
                 } else if (isDone) {
                     badgeHtml = `<span class="bg-green-100 text-green-700 text-[10px] px-2 py-1 rounded-full font-bold">✅ สำเร็จแล้ว</span>`;
-                } else {
-                    badgeHtml = `<span class="bg-gray-100 text-gray-600 text-[10px] px-2 py-1 rounded-full font-medium">⏳ รอเหตุการณ์</span>`;
                 }
 
-                const targetText = item.isTBD ? "ยังไม่มีกำหนด" : `ภายใน ${item.timeNumber} ${unitLabels[item.timeUnit]}`;
-
-                let trackingHtml = '';
-                if (item.isTracking) {
-                    let percent = 0;
-                    if (item.trackType === 'numeric' && item.trackTarget > 0) {
-                        percent = Math.min((item.trackCurrent / item.trackTarget) * 100, 100).toFixed(0);
-                        let barColor = percent >= 100 ? 'bg-green-500' : 'bg-blue-500';
-
-                        trackingHtml = `
-                            <div class="mt-3 bg-gray-50 p-2.5 rounded-lg border border-gray-100">
-                                <div class="flex justify-between items-end mb-1">
-                                    <span class="text-[11px] text-gray-500 font-bold uppercase tracking-wider">ความคืบหน้า</span>
-                                    <span class="text-xs font-bold text-gray-700">${Number(item.trackCurrent).toLocaleString()} / ${Number(item.trackTarget).toLocaleString()} <span class="text-gray-500 font-normal">${item.trackUnit}</span> (${percent}%)</span>
-                                </div>
-                                <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div class="${barColor} h-2 rounded-full transition-all duration-500" style="width: ${percent}%"></div>
-                                </div>
-                                ${!isDone ? `<button onclick="promptQuickUpdate('${item.id}',${item.trackCurrent})" class="text-[10px] text-blue-600 hover:text-blue-800 font-bold mt-2 flex items-center gap-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg> อัปเดตตัวเลข</button>` : ''}
-                            </div>
-                        `;
-                    } else if (item.trackType === 'checklist' && item.checklists && item.checklists.length > 0) {
-                        let totalChecks = item.checklists.length;
-                        let doneChecks = item.checklists.filter(c => c.isDone).length;
-                        percent = Math.min((doneChecks / totalChecks) * 100, 100).toFixed(0);
-                        let barColor = percent >= 100 ? 'bg-green-500' : 'bg-purple-500';
-
-                        let listHtml = '';
-                        item.checklists.forEach((chk, idx) => {
-                            listHtml += `
-                                <label class="flex items-start space-x-2 text-sm cursor-pointer mb-1 group">
-                                    <input type="checkbox" class="mt-1 rounded text-purple-600 focus:ring-purple-500" ${chk.isDone ? 'checked' : ''} onchange="toggleChecklistItem('${item.id}', ${idx}, this.checked)" ${isDone ? 'disabled' : ''}>
-                                    <span class="group-hover:text-purple-700 transition ${chk.isDone ? 'line-through text-gray-400' : 'text-gray-700'}">${chk.text}</span>
-                                </label>
-                            `;
-                        });
-
-                        trackingHtml = `
-                            <div class="mt-3 bg-purple-50 p-2.5 rounded-lg border border-purple-100">
-                                <div class="flex justify-between items-end mb-2">
-                                    <span class="text-[11px] text-purple-600 font-bold uppercase tracking-wider">ขั้นตอน</span>
-                                    <span class="text-xs font-bold text-gray-700">${doneChecks}/${totalChecks} (${percent}%)</span>
-                                </div>
-                                <div class="w-full bg-gray-200 rounded-full h-1.5 mb-3">
-                                    <div class="${barColor} h-1.5 rounded-full transition-all duration-500" style="width: ${percent}%"></div>
-                                </div>
-                                <div class="pl-1">${listHtml}</div>
-                            </div>
-                        `;
-                    }
+                // รูปแบบป้ายระบุประเภท
+                const typeLabel = item.itemType === 'todo' ? '✅ To-Do List' : '🌟 Bucket List';
+                
+                // รูปแบบข้อความระบุเวลา
+                let timeDisplay = '';
+                if (item.itemType === 'todo') {
+                    const dateObj = new Date(item.specificDate);
+                    timeDisplay = `${dateObj.toLocaleDateString('th-TH')} | 🕒 ${item.startTime} - ${item.endTime}`;
+                } else {
+                    timeDisplay = item.isTBD ? "รอเหตุการณ์ (TBD)" : `ภายใน ${item.timeNumber} ${unitLabels[item.timeUnit]}`;
                 }
 
                 const card = `
-                    <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition p-5 border-l-4 ${isDone ? 'border-gray-400 completed-item' : (index === 0 && statusFilter === 'pending' ? 'border-yellow-400' : 'border-indigo-400')} relative flex flex-col h-full">
-                        ${!isDone && index === 0 && statusFilter === 'pending' ? '<span class="absolute -top-3 -right-3 text-3xl">👑</span>' : ''}
+                    <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition p-5 border-l-4 ${isDone ? 'border-gray-400 completed-item' : (item.itemType === 'todo' ? 'border-green-400' : 'border-indigo-400')} relative flex flex-col h-full">
                         
                         <div class="flex justify-between items-start mb-2">
                             <h3 class="text-lg font-bold ${isDone ? 'line-through text-gray-500' : 'text-gray-800'} pr-2 leading-tight">${item.name}</h3>
                             <div class="flex flex-col items-end gap-1">
-                                <span class="bg-gray-100 text-gray-600 text-[11px] font-bold px-2 py-1 rounded-full whitespace-nowrap">Score: ${score}</span>
+                                <span class="bg-gray-100 text-gray-600 text-[10px] font-bold px-2 py-1 rounded-full">${typeLabel}</span>
                                 ${badgeHtml}
                             </div>
                         </div>
                         
                         <div class="text-sm text-gray-600 space-y-1 mb-2 flex-grow">
-                            <p class="text-[12px] text-gray-400">เป้าหมาย: ${targetText}</p>
+                            <p class="text-[12px] font-medium text-gray-500">📅 กำหนด: <span class="${item.itemType === 'todo' ? 'text-green-600' : 'text-indigo-600'}">${timeDisplay}</span></p>
                             <p class="mt-1">💰 งบประมาณ: <span class="font-medium text-green-600">฿${Number(item.price).toLocaleString()}</span></p>
                         </div>
                         
-                        ${trackingHtml}
-                        
-                        <!-- Actions -->
                         <div class="mt-auto border-t pt-3 mt-4 flex justify-between items-center">
-                            <div class="flex gap-4">
-                                <button onclick="openEditModal('${item.id}')" class="text-xs text-blue-500 hover:text-blue-700 font-medium flex items-center gap-1">
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg> แก้ไข
-                                </button>
-                                <button onclick="deleteItem('${item.id}')" class="text-xs text-red-400 hover:text-red-600 font-medium">ลบทิ้ง</button>
-                            </div>
-                            
-                            <button onclick="toggleStatus('${item.id}', ${isDone})" class="text-xs px-3 py-1.5 rounded-full font-bold transition ${isDone ? 'bg-gray-200 text-gray-600 hover:bg-gray-300' : 'bg-green-100 text-green-700 hover:bg-green-200'}">
-                                ${isDone ? 'ยกเลิกสถานะ' : '✅ ทำสำเร็จแล้ว!'}
+                            <button onclick="deleteItem('${item.id}')" class="text-xs text-red-400 hover:text-red-600 font-medium">ลบทิ้ง</button>
+                            <button onclick="toggleStatus('${item.id}', ${isDone})" class="text-xs px-3 py-1.5 rounded-full font-bold transition ${isDone ? 'bg-gray-200 text-gray-600' : 'bg-green-100 text-green-700 hover:bg-green-200'}">
+                                ${isDone ? 'ยกเลิกสถานะ' : '✅ เสร็จแล้ว!'}
                             </button>
                         </div>
                     </div>
@@ -500,80 +338,20 @@
             });
         };
 
-        window.promptQuickUpdate = async function(id, currentVal) {
-            const newVal = prompt("อัปเดตตัวเลขความคืบหน้าล่าสุด:", currentVal);
-            if (newVal !== null && newVal !== "" && !isNaN(newVal)) {
-                await updateDoc(doc(db, "bucketlist", id), { trackCurrent: Number(newVal) });
-                loadItemsFromDB();
-            }
-        };
-
-        window.toggleChecklistItem = async function(id, checkIndex, isDone) {
-            const item = allItems.find(i => i.id === id);
-            if(item && item.checklists) {
-                item.checklists[checkIndex].isDone = isDone;
-                await updateDoc(doc(db, "bucketlist", id), { checklists: item.checklists });
-                renderItems(); 
-            }
-        };
-
         window.openAddModal = function() {
             document.getElementById('bucketForm').reset();
             document.getElementById('editId').value = ""; 
-            document.getElementById('modalTitle').innerText = "✨ เพิ่มเป้าหมายใหม่";
-            document.getElementById('checklistContainer').innerHTML = '';
             
-            document.getElementById('itemTBD').dispatchEvent(new Event('change'));
-            document.getElementById('itemTracking').checked = false;
-            document.getElementById('itemTracking').dispatchEvent(new Event('change'));
-            document.getElementById('trackType').dispatchEvent(new Event('change'));
+            // รีเซ็ตให้กลับไปหน้า Bucket List เป็นค่าเริ่มต้น
+            document.querySelector('input[name="itemType"][value="bucket"]').checked = true;
+            document.getElementById('bucketTimeContainer').classList.remove('hidden');
+            document.getElementById('todoTimeContainer').classList.add('hidden');
             
-            toggleModal('mainModal');
-        }
-
-        window.openEditModal = function(id) {
-            const item = allItems.find(i => i.id === id);
-            if(!item) return;
-
-            document.getElementById('editId').value = item.id;
-            document.getElementById('modalTitle').innerText = "✏️ แก้ไขเป้าหมาย";
-
-            document.getElementById('itemName').value = item.name;
-            document.getElementById('itemPrice').value = item.price;
-            document.getElementById('itemNecessity').value = item.necessity;
-            document.getElementById('itemImpact').value = item.impact;
-            document.getElementById('itemPossibility').value = item.possibility;
-            
-            document.getElementById('itemTBD').checked = item.isTBD;
-            document.getElementById('timeNumber').value = item.timeNumber;
-            document.getElementById('timeUnit').value = item.timeUnit;
-            document.getElementById('itemTBD').dispatchEvent(new Event('change'));
-
-            const isTracking = item.isTracking || false;
-            document.getElementById('itemTracking').checked = isTracking;
-            document.getElementById('trackType').value = item.trackType || 'numeric';
-            document.getElementById('trackTarget').value = item.trackTarget || "";
-            document.getElementById('trackUnit').value = item.trackUnit || "";
-            document.getElementById('trackCurrent').value = item.trackCurrent || 0;
-            
-            document.getElementById('itemTracking').dispatchEvent(new Event('change'));
-            document.getElementById('trackType').dispatchEvent(new Event('change'));
-
-            const chkContainer = document.getElementById('checklistContainer');
-            chkContainer.innerHTML = '';
-            if (item.trackType === 'checklist' && item.checklists) {
-                item.checklists.forEach(chk => {
-                    addChecklistItem(chk.text, chk.isDone);
-                });
-            } else if (isTracking && item.trackType === 'checklist') {
-                addChecklistItem();
-            }
-
             toggleModal('mainModal');
         }
 
         // ==========================================
-        // ส่วนสำคัญ: การบันทึก และเรียกใช้งาน GAS Calendar
+        // การบันทึกเข้า Firebase + ยิงเข้า Calendar
         // ==========================================
         document.getElementById('bucketForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -581,35 +359,25 @@
             btn.innerHTML = 'กำลังบันทึก...'; btn.disabled = true;
 
             const editId = document.getElementById('editId').value;
+            const itemType = document.querySelector('input[name="itemType"]:checked').value;
+            
             const isTBD = document.getElementById('itemTBD').checked;
             const tNumber = Number(document.getElementById('timeNumber').value);
             const tUnit = document.getElementById('timeUnit').value;
+            const specificDate = document.getElementById('todoDate').value;
+            const startTime = document.getElementById('todoStartTime').value;
+            const endTime = document.getElementById('todoEndTime').value;
             
             let calculatedDays = 0;
-            if(!isTBD) {
+            if(itemType === 'bucket' && !isTBD) {
                 if(tUnit === 'weeks') calculatedDays = tNumber * 7;
                 else if(tUnit === 'months') calculatedDays = tNumber * 30;
                 else if(tUnit === 'years') calculatedDays = tNumber * 365;
             }
 
-            const isTracking = document.getElementById('itemTracking').checked;
-            const trackType = document.getElementById('trackType').value;
-            
-            const checklists = [];
-            if (isTracking && trackType === 'checklist') {
-                const listItems = document.querySelectorAll('#checklistContainer li');
-                listItems.forEach(li => {
-                    const txt = li.querySelector('.chk-text').value.trim();
-                    const isDone = li.querySelector('.chk-status').checked;
-                    if(txt) checklists.push({ text: txt, isDone: isDone });
-                });
-            }
-
-            // คำนวณหาวันที่เป้าหมายล่วงหน้า (เพื่อส่งให้ Calendar)
             let exactTargetDate = null;
-            if (!isTBD) {
-                const today = new Date();
-                exactTargetDate = new Date(today.getTime() + (calculatedDays * 24 * 60 * 60 * 1000)).toISOString();
+            if (itemType === 'bucket' && !isTBD) {
+                exactTargetDate = new Date(new Date().getTime() + (calculatedDays * 24 * 60 * 60 * 1000)).toISOString();
             }
 
             const data = {
@@ -618,16 +386,18 @@
                 necessity: Number(document.getElementById('itemNecessity').value),
                 impact: Number(document.getElementById('itemImpact').value),
                 possibility: Number(document.getElementById('itemPossibility').value),
+                itemType: itemType, // 'bucket' or 'todo'
+                
+                // สำหรับ Bucket List
                 timeNumber: tNumber,
                 timeUnit: tUnit,
                 isTBD: isTBD,
                 calculatedDays: calculatedDays,
-                isTracking: isTracking,
-                trackType: trackType,
-                trackTarget: isTracking && trackType === 'numeric' ? Number(document.getElementById('trackTarget').value) : 0,
-                trackUnit: isTracking && trackType === 'numeric' ? document.getElementById('trackUnit').value : "",
-                trackCurrent: isTracking && trackType === 'numeric' ? Number(document.getElementById('trackCurrent').value) : 0,
-                checklists: checklists
+                
+                // สำหรับ To-Do List
+                specificDate: specificDate,
+                startTime: startTime,
+                endTime: endTime
             };
 
             try {
@@ -638,29 +408,32 @@
                     data.createdAt = new Date().toISOString();
                     await addDoc(colRef, data);
 
-                    // 🔥 ยิงข้อมูลไปที่ Google Calendar แบบเบื้องหลัง (ถ้าไม่ใช่แบบ TBD)
-                    if (!isTBD) {
+                    // 🔥 ยิง API ปัก Calendar โดยแยกว่าเป็น Todo หรือ Bucket
+                    if ((itemType === 'todo' && specificDate && startTime) || (itemType === 'bucket' && !isTBD)) {
                         fetch(GAS_CALENDAR_URL, {
                             method: "POST",
-                            headers: { "Content-Type": "text/plain;charset=utf-8" }, // เลี่ยงปัญหา CORS ของ GAS
+                            headers: { "Content-Type": "text/plain;charset=utf-8" },
                             body: JSON.stringify({
                                 name: data.name,
                                 price: data.price,
                                 necessity: data.necessity,
+                                itemType: data.itemType,
                                 isTBD: data.isTBD,
-                                targetDate: exactTargetDate
+                                targetDate: exactTargetDate, // ใช้ของ Bucket
+                                specificDate: data.specificDate, // ใช้ของ Todo
+                                startTime: data.startTime,
+                                endTime: data.endTime
                             })
-                        }).then(response => console.log("ส่งเข้า Calendar แล้ว!"))
-                          .catch(err => console.error("Calendar Sync Error:", err));
+                        }).then(r => console.log("ส่งเข้า Calendar สำเร็จ"));
                     }
                 }
                 
                 toggleModal('mainModal');
                 loadItemsFromDB(); 
             } catch (error) {
-                console.error(error); alert("เกิดข้อผิดพลาดในการบันทึก");
+                alert("บันทึกไม่สำเร็จ");
             } finally {
-                btn.innerHTML = 'บันทึกเป้าหมาย'; btn.disabled = false;
+                btn.innerHTML = 'บันทึกข้อมูล'; btn.disabled = false;
             }
         });
 
@@ -672,30 +445,19 @@
         };
 
         window.toggleStatus = async function(id, currentStatus) {
-            try {
-                await updateDoc(doc(db, "bucketlist", id), { isCompleted: !currentStatus });
-                loadItemsFromDB(); 
-            } catch (error) {
-                console.error("Error updating status:", error);
-            }
+            await updateDoc(doc(db, "bucketlist", id), { isCompleted: !currentStatus });
+            loadItemsFromDB(); 
         };
 
         loadItemsFromDB();
     </script>
 
-    <!-- UI Script -->
     <script>
         function toggleModal(modalID) {
             const modal = document.getElementById(modalID);
             modal.classList.toggle('opacity-0');
             modal.classList.toggle('pointer-events-none');
-            const anyModalOpen = !document.getElementById('mainModal').classList.contains('opacity-0') || 
-                                 !document.getElementById('quickWinModal').classList.contains('opacity-0');
-            if (anyModalOpen) {
-                document.body.classList.add('modal-active');
-            } else {
-                document.body.classList.remove('modal-active');
-            }
+            document.body.classList.toggle('modal-active');
         }
     </script>
 </body>
