@@ -32,7 +32,6 @@
         <!-- 🌟 แถบเมนูนำทางหลัก (Navigation) -->
         <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6 bg-white p-3 rounded-2xl shadow-sm border border-gray-100">
             
-            <!-- ปุ่มใหญ่ 2 ปุ่ม (Summary & Quick Win) -->
             <div class="flex w-full md:w-auto gap-2">
                 <button onclick="switchView('summary')" class="flex-1 md:flex-none bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-600 hover:to-teal-500 text-white font-bold py-2 px-6 rounded-full shadow-md transition transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
                     📊 หน้าสรุป
@@ -42,7 +41,6 @@
                 </button>
             </div>
             
-            <!-- Tab เลือกดูรายการย่อย -->
             <div class="flex bg-gray-100 p-1.5 rounded-full w-full md:w-auto overflow-hidden">
                 <button onclick="switchView('list', 'all')" id="nav-all" class="flex-1 px-5 py-2 text-sm font-medium rounded-full text-gray-500 hover:text-gray-800 transition">📝 รายการทั้งหมด</button>
                 <button onclick="switchView('list', 'bucket')" id="nav-bucket" class="flex-1 px-5 py-2 text-sm font-medium rounded-full text-gray-500 hover:text-gray-800 transition">🌟 Bucket</button>
@@ -55,16 +53,14 @@
         <!-- ========================================== -->
         <div id="summaryView" class="grid grid-cols-1 md:grid-cols-2 gap-5 animate-pop pb-10">
             
-            <!-- Card 1: ภารกิจวันนี้ -->
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-full h-1.5 bg-green-400"></div>
                 <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">☀️ ภารกิจวันนี้</h3>
                 <div id="sumTodayTasks" class="space-y-3">
-                    <!-- โหลดภารกิจวันนี้ -->
+                    <p class="text-gray-400 text-center py-4">กำลังโหลดข้อมูล...</p>
                 </div>
             </div>
 
-            <!-- Card 2: To-Do Matrix -->
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-full h-1.5 bg-yellow-400"></div>
                 <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">📦 To-Do Matrix (รอทำ)</h3>
@@ -88,16 +84,14 @@
                 </div>
             </div>
 
-            <!-- Card 3: Bucket List โค้งสุดท้าย -->
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-full h-1.5 bg-indigo-400"></div>
                 <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">🎯 Bucket โค้งสุดท้าย</h3>
                 <div id="sumUrgentBuckets" class="space-y-3">
-                    <!-- โหลด Bucket เร่งด่วน -->
+                    <p class="text-gray-400 text-center py-4">กำลังโหลดข้อมูล...</p>
                 </div>
             </div>
 
-            <!-- Card 4: สุขภาพการเงิน -->
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden flex flex-col justify-center">
                 <div class="absolute top-0 left-0 w-full h-1.5 bg-blue-400"></div>
                 <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">💰 การใช้จ่ายเพื่อเป้าหมาย</h3>
@@ -108,7 +102,6 @@
                 <div class="w-full bg-gray-100 rounded-full h-5 shadow-inner p-1">
                     <div id="sumBudgetBar" class="bg-gradient-to-r from-blue-400 to-indigo-500 h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
                 </div>
-                <p class="text-xs text-gray-400 mt-4 text-center">* เปรียบเทียบจากเป้าหมายที่ทำสำเร็จแล้ว เทียบกับงบประมาณที่ตั้งไว้ทั้งหมด</p>
             </div>
         </div>
 
@@ -116,7 +109,6 @@
         <!-- 📝 VIEW 2: LIST VIEW (ดูรายการทั้งหมด/ย่อย) -->
         <!-- ========================================== -->
         <div id="listView" class="hidden animate-pop pb-10">
-            <!-- Filter Status -->
             <div class="flex justify-end mb-4">
                 <select id="filterStatus" onchange="renderItems()" class="w-full md:w-48 rounded-xl border-gray-300 shadow-sm border p-2 text-sm focus:border-indigo-500 bg-white">
                     <option value="all">แสดงสถานะทั้งหมด</option>
@@ -130,7 +122,7 @@
             </div>
         </div>
 
-    </div> <!-- End Main Container -->
+    </div>
 
     <!-- 🌟 Modal สำหรับ Quick Win -->
     <div class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-[60] px-4" id="quickWinModal">
@@ -139,7 +131,7 @@
             <div class="p-8 text-center">
                 <div class="text-6xl mb-4 animate-bounce">🎁</div>
                 <h3 class="text-2xl font-bold text-gray-800 mb-2">ทำสิ่งนี้ดูสิ!</h3>
-                <p class="text-sm text-gray-500 mb-6">เป้าหมายเล็กๆ ที่ทำได้ง่ายและใช้เงินน้อย</p>
+                <p class="text-sm text-gray-500 mb-6">เป้าหมายเล็กๆ ที่ทำได้ง่ายและใช้เงินน้อย เพื่อเติมไฟให้คุณวันนี้</p>
                 <div class="bg-gradient-to-br from-pink-50 to-orange-50 p-6 rounded-2xl border border-pink-100 mb-6 shadow-inner">
                     <h4 id="qwName" class="text-xl font-bold text-pink-600 mb-3 leading-tight">ชื่อเป้าหมาย</h4>
                     <div class="flex justify-center gap-4 text-sm font-bold text-gray-600">
@@ -196,7 +188,6 @@
                         <input type="number" id="itemPrice" required min="0" class="block w-full rounded-xl border-gray-300 border p-3 text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition" placeholder="0 = ฟรี">
                     </div>
                     
-                    <!-- 🌟 โซน Bucket List (Necessity, Impact, Possibility) -->
                     <div id="bucketPriorityContainer" class="space-y-4">
                         <div class="flex gap-3">
                             <div class="w-1/2">
@@ -224,7 +215,6 @@
                                 <option value="1">🔴 ยากมาก / โอกาสน้อย</option>
                             </select>
                         </div>
-                        
                         <div class="bg-gray-50 p-4 rounded-2xl border border-gray-200">
                             <label class="block text-sm font-bold text-gray-700 mb-2">6. ระยะเวลาที่คาดหวัง</label>
                             <div class="flex space-x-2">
@@ -242,7 +232,6 @@
                         </div>
                     </div>
 
-                    <!-- ✅ โซน To-Do List (Eisenhower Matrix) -->
                     <div id="todoPriorityContainer" class="hidden space-y-4">
                         <div class="bg-yellow-50 p-4 rounded-2xl border border-yellow-200 shadow-sm">
                             <label class="block text-sm font-black text-gray-800 mb-2">3. ระดับความสำคัญ (Eisenhower Matrix)</label>
@@ -287,7 +276,6 @@
                                 </div>
                             </div>
                             
-                            <!-- 🔄 ระบบทำซ้ำสำหรับ To-Do List -->
                             <div class="mt-4 pt-3 border-t border-green-200/50">
                                 <label class="block text-[11px] text-green-700 font-bold mb-1 uppercase tracking-wider pl-1">🔄 การทำซ้ำ (Repeat)</label>
                                 <select id="todoRepeat" class="block w-full rounded-xl border-gray-300 p-3 text-sm bg-white outline-none focus:ring-2 focus:ring-green-400">
@@ -351,7 +339,7 @@
         </div>
     </div>
 
-    <!-- โหลด Firebase & Script -->
+    <!-- โหลด Firebase -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -382,10 +370,7 @@
             "1": "☁️ ไม่สำคัญ + ไม่เร่งด่วน"
         };
         const matrixColors = {
-            "4": "text-red-500",
-            "3": "text-orange-500",
-            "2": "text-yellow-500",
-            "1": "text-gray-400"
+            "4": "text-red-500", "3": "text-orange-500", "2": "text-yellow-500", "1": "text-gray-400"
         };
 
         // ------------------ Initialize Time Dropdowns ------------------
@@ -401,7 +386,6 @@
 
         // ------------------ Views & Navigation Logic ------------------
         window.switchView = function(view, filterType = 'all') {
-            // Reset Tab styling
             ['nav-all', 'nav-bucket', 'nav-todo'].forEach(id => {
                 document.getElementById(id).className = "flex-1 px-5 py-2 text-sm font-medium rounded-full text-gray-500 hover:text-gray-800 transition";
             });
@@ -413,7 +397,6 @@
             } else {
                 document.getElementById('summaryView').classList.add('hidden');
                 document.getElementById('listView').classList.remove('hidden');
-                // Highlight active tab
                 document.getElementById(`nav-${filterType}`).className = "flex-1 px-5 py-2 text-sm font-bold rounded-full bg-white shadow-sm text-indigo-600 transition";
                 currentTypeFilter = filterType;
                 renderItems();
@@ -443,7 +426,7 @@
             const id = document.getElementById('qwCurrentId').value;
             if(!id) return;
             try {
-                await toggleStatus(id, false); // ส่งให้ฟังก์ชัน toggle จัดการ
+                await toggleStatus(id, false); 
                 toggleModal('quickWinModal');
                 setTimeout(() => { alert("เก่งมากครับ! 🎉 เป็นก้าวเล็กๆ ที่ยอดเยี่ยม"); }, 300);
             } catch (error) { console.error(error); }
@@ -526,28 +509,35 @@
                     allItems.push({ id: docSnap.id, ...data });
                 });
                 
-                // Initialize View based on current state
                 if(!document.getElementById('summaryView').classList.contains('hidden')) {
                     renderSummary();
                 } else {
                     renderItems();
                 }
             } catch (error) {
-                console.error(error);
-                document.getElementById('summaryView').innerHTML = '<p class="text-center w-full py-10 text-red-500 col-span-2">เชื่อมต่อฐานข้อมูลล้มเหลว ตรวจสอบ Firebase Keys</p>';
+                // 🛑 ระบบกันเหนียว กรณี Firebase โหลดไม่ขึ้น (เช่น Rules หมดอายุ)
+                console.error("Firebase Error:", error);
+                const errorMsg = `
+                    <div class="col-span-full text-center py-10 bg-red-50 rounded-3xl border border-red-100 mt-4">
+                        <p class="text-red-500 font-bold text-xl mb-2">⚠️ ไม่สามารถเชื่อมต่อฐานข้อมูลได้</p>
+                        <p class="text-red-400 text-sm">1. ลืมใส่ API Keys ของ Firebase หรือเปล่า?<br>2. กฎ Firebase (Rules) หมดอายุ 30 วันหรือไม่? ให้แก้ Rules เป็น if true;</p>
+                    </div>`;
+                document.getElementById('summaryView').innerHTML = errorMsg;
+                document.getElementById('bucketListContainer').innerHTML = errorMsg;
             }
         }
 
-        // ==========================================
-        // 📊 Render Summary Page (NEW)
-        // ==========================================
         window.renderSummary = function() {
-            if (allItems.length === 0) return;
+            if (allItems.length === 0) {
+                document.getElementById('sumTodayTasks').innerHTML = '<div class="text-center py-6 bg-gray-50 rounded-2xl border border-gray-100"><p class="text-sm font-bold text-gray-400">ยังไม่มีเป้าหมาย</p></div>';
+                document.getElementById('sumUrgentBuckets').innerHTML = '<div class="text-center py-6 bg-gray-50 rounded-2xl border border-gray-100"><p class="text-sm font-bold text-gray-400">ยังไม่มีเป้าหมาย</p></div>';
+                return;
+            }
 
             const offset = new Date().getTimezoneOffset() * 60000;
             const todayStr = new Date(Date.now() - offset).toISOString().split('T')[0];
 
-            // 1. ภารกิจวันนี้ (To-Do list วันนี้ที่ยังไม่เสร็จ)
+            // 1. ภารกิจวันนี้
             const todaysTasks = allItems.filter(i => i.itemType === 'todo' && i.specificDate === todayStr && !i.isCompleted)
                                         .sort((a, b) => b.todoMatrix - a.todoMatrix);
             
@@ -569,15 +559,15 @@
             }
             document.getElementById('sumTodayTasks').innerHTML = todayHtml;
 
-            // 2. To-Do Matrix (ภาพรวมงานค้าง)
+            // 2. To-Do Matrix 
             const pendingTodos = allItems.filter(i => i.itemType === 'todo' && !i.isCompleted);
-            document.getElementById('sumM4').innerText = pendingTodos.filter(i => i.todoMatrix === '4').length;
-            document.getElementById('sumM3').innerText = pendingTodos.filter(i => i.todoMatrix === '3').length;
-            document.getElementById('sumM2').innerText = pendingTodos.filter(i => i.todoMatrix === '2').length;
-            document.getElementById('sumM1').innerText = pendingTodos.filter(i => i.todoMatrix === '1').length;
+            document.getElementById('sumM4').innerText = pendingTodos.filter(i => String(i.todoMatrix) === '4').length;
+            document.getElementById('sumM3').innerText = pendingTodos.filter(i => String(i.todoMatrix) === '3').length;
+            document.getElementById('sumM2').innerText = pendingTodos.filter(i => String(i.todoMatrix) === '2').length;
+            document.getElementById('sumM1').innerText = pendingTodos.filter(i => String(i.todoMatrix) === '1').length;
 
-            // 3. Bucket โค้งสุดท้าย (เหลือน้อยกว่า 30 วัน)
-            const urgentBuckets = allItems.filter(i => (i.itemType === 'bucket' || !i.itemType) && !i.isCompleted && !i.isTBD && i.daysLeft <= 30)
+            // 3. Bucket โค้งสุดท้าย
+            const urgentBuckets = allItems.filter(i => (i.itemType === 'bucket' || !i.itemType) && !i.isCompleted && !i.isTBD && !isNaN(i.daysLeft) && i.daysLeft <= 30)
                                           .sort((a,b) => a.daysLeft - b.daysLeft);
             
             let bucketHtml = '';
@@ -607,9 +597,6 @@
             document.getElementById('sumBudgetBar').style.width = `${budgetPercent}%`;
         }
 
-        // ==========================================
-        // 📝 Render List Page
-        // ==========================================
         window.renderItems = function() {
             const container = document.getElementById('bucketListContainer');
             const statusFilter = document.getElementById('filterStatus').value;
@@ -623,11 +610,11 @@
             });
 
             filteredItems.sort((a, b) => {
-                let scoreA = a.itemType === 'todo' ? (Number(a.todoMatrix || 1) * 10) - Math.max(a.daysLeft, 0) : (Number(a.necessity) * 2) + (Number(a.impact) * 2) + (a.daysLeft <= 30 ? 5 : 0) + Number(a.possibility);
-                let scoreB = b.itemType === 'todo' ? (Number(b.todoMatrix || 1) * 10) - Math.max(b.daysLeft, 0) : (Number(b.necessity) * 2) + (Number(b.impact) * 2) + (b.daysLeft <= 30 ? 5 : 0) + Number(b.possibility);
-                if (scoreA !== scoreB) return scoreB - scoreA;
-                const daysA = a.isTBD ? Infinity : a.daysLeft;
-                const daysB = b.isTBD ? Infinity : b.daysLeft;
+                let scoreA = a.itemType === 'todo' ? (Number(a.todoMatrix || 1) * 10) - Math.max(a.daysLeft || 0, 0) : (Number(a.necessity) * 2) + (Number(a.impact) * 2) + (a.daysLeft <= 30 ? 5 : 0) + Number(a.possibility);
+                let scoreB = b.itemType === 'todo' ? (Number(b.todoMatrix || 1) * 10) - Math.max(b.daysLeft || 0, 0) : (Number(b.necessity) * 2) + (Number(b.impact) * 2) + (b.daysLeft <= 30 ? 5 : 0) + Number(b.possibility);
+                if (scoreA !== scoreB && !isNaN(scoreA) && !isNaN(scoreB)) return scoreB - scoreA;
+                const daysA = a.isTBD || isNaN(a.daysLeft) ? Infinity : a.daysLeft;
+                const daysB = b.isTBD || isNaN(b.daysLeft) ? Infinity : b.daysLeft;
                 if (daysA !== daysB) return daysA - daysB; 
                 return Number(a.price) - Number(b.price);
             });
@@ -646,9 +633,8 @@
                 const isDone = item.isCompleted;
                 const itemTypeStr = item.itemType || 'bucket';
 
-                // Badge Date
                 let badgeHtml = '';
-                if (!item.isTBD && !isDone) {
+                if (!item.isTBD && !isDone && !isNaN(item.daysLeft)) {
                     if (item.daysLeft < 0) badgeHtml = `<span class="bg-red-100 text-red-700 text-[10px] px-2 py-1 rounded-md font-bold">🚨 เลยกำหนด</span>`;
                     else if (item.daysLeft === 0) badgeHtml = `<span class="bg-orange-100 text-orange-700 text-[10px] px-2 py-1 rounded-md font-bold">⏰ วันนี้!</span>`;
                     else badgeHtml = `<span class="bg-blue-50 text-blue-600 text-[10px] px-2 py-1 rounded-md font-bold">เหลือ ${item.daysLeft} วัน</span>`;
@@ -668,9 +654,8 @@
                     timeDisplay = item.isTBD ? "รอเหตุการณ์ (TBD)" : `ภายใน ${item.timeNumber} ${unitLabels[item.timeUnit]}`;
                 }
 
-                // 🌟 ป้ายแสดงความสำคัญ (Eisenhower)
                 let matrixBadge = '';
-                if (itemTypeStr === 'todo' && item.todoMatrix) {
+                if (itemTypeStr === 'todo' && item.todoMatrix && matrixLabels[item.todoMatrix]) {
                     let mColors = {
                         "4": "bg-red-50 text-red-600 border-red-100",
                         "3": "bg-orange-50 text-orange-600 border-orange-100",
@@ -680,13 +665,11 @@
                     matrixBadge = `<div class="mt-2 inline-block px-2 py-1 text-[10px] font-bold border rounded-md uppercase tracking-wider ${mColors[item.todoMatrix]}">${matrixLabels[item.todoMatrix]}</div>`;
                 }
                 
-                // 🔄 ป้ายแสดงว่าทำซ้ำ
                 if (itemTypeStr === 'todo' && item.todoRepeat && item.todoRepeat !== 'none') {
                     let rLabel = { "daily": "ทุกวัน", "weekly": "ทุกสัปดาห์", "monthly": "ทุกเดือน" }[item.todoRepeat];
                     matrixBadge += `<div class="mt-2 ml-1 inline-block px-2 py-1 text-[10px] font-bold border border-green-200 bg-green-50 text-green-700 rounded-md uppercase">🔄 ${rLabel}</div>`;
                 }
 
-                // 📈 Tracking UI
                 let trackingHtml = '';
                 if (item.isTracking) {
                     let percent = 0;
@@ -808,7 +791,7 @@
             document.getElementById('todoEndHour').value = '09';
             document.getElementById('todoEndMinute').value = '00';
             document.getElementById('todoMatrix').value = '4';
-            document.getElementById('todoRepeat').value = 'none'; // Reset Repeat
+            document.getElementById('todoRepeat').value = 'none'; 
 
             toggleModal('mainModal');
         }
@@ -836,7 +819,7 @@
             
             document.getElementById('todoMatrix').value = item.todoMatrix || '4';
             document.getElementById('todoDate').value = item.specificDate || "";
-            document.getElementById('todoRepeat').value = item.todoRepeat || 'none'; // โหลดค่าทำซ้ำ
+            document.getElementById('todoRepeat').value = item.todoRepeat || 'none'; 
 
             if(item.startTime) {
                 const sParts = item.startTime.split(':');
@@ -872,52 +855,38 @@
             toggleModal('mainModal');
         }
 
-        // ==========================================
-        // 🔄 ฟังก์ชันสลับสถานะ และระบบ ทำซ้ำ (Recurring) อัตโนมัติ
-        // ==========================================
         window.toggleStatus = async function(id, currentStatus) {
             const item = allItems.find(i => i.id === id);
             if (!item) return;
 
             try {
-                // ถ้าเป็นการกด "✅ เสร็จแล้ว" และรายการนี้ตั้งค่าให้ "ทำซ้ำ" (todoRepeat !== 'none')
                 if (!currentStatus && item.itemType === 'todo' && item.todoRepeat && item.todoRepeat !== 'none') {
-                    
-                    // 1. เปลี่ยนตัวปัจจุบันให้เป็นเสร็จแล้ว
                     await updateDoc(doc(db, "bucketlist", id), { isCompleted: true });
                     
-                    // 2. คำนวณวันที่ถัดไปสำหรับการทำซ้ำ
                     let nextDate = new Date(item.specificDate);
                     if(item.todoRepeat === 'daily') nextDate.setDate(nextDate.getDate() + 1);
                     if(item.todoRepeat === 'weekly') nextDate.setDate(nextDate.getDate() + 7);
                     if(item.todoRepeat === 'monthly') nextDate.setMonth(nextDate.getMonth() + 1);
                     
-                    // Format วันที่ให้ถูกต้องตาม Timezone ไทย
                     const offset = nextDate.getTimezoneOffset() * 60000;
                     const nextDateString = (new Date(nextDate - offset)).toISOString().split('T')[0];
 
-                    // 3. เตรียมข้อมูลสำหรับตัวใหม่ที่จะโคลน
                     const cloneData = { ...item };
                     delete cloneData.id; 
                     delete cloneData.daysLeft; 
                     
-                    cloneData.isCompleted = false; // ทำให้สถานะรอทำเหมือนเดิม
+                    cloneData.isCompleted = false; 
                     cloneData.createdAt = new Date().toISOString();
-                    cloneData.specificDate = nextDateString; // อัปเดตวันใหม่
+                    cloneData.specificDate = nextDateString; 
                     
-                    // รีเซ็ต Tracking ถ้ามี
                     if(cloneData.isTracking && cloneData.trackType === 'numeric') {
                         cloneData.trackCurrent = 0;
                     } else if (cloneData.isTracking && cloneData.trackType === 'checklist') {
                         cloneData.checklists = cloneData.checklists.map(c => ({...c, isDone: false}));
                     }
 
-                    // 4. บันทึกตัวใหม่ลงฐานข้อมูล
                     await addDoc(colRef, cloneData);
-                    console.log("สร้างรายการทำซ้ำรอบใหม่สำเร็จ!");
-                    
                 } else {
-                    // ปรับสถานะธรรมดา
                     await updateDoc(doc(db, "bucketlist", id), { isCompleted: !currentStatus });
                 }
                 
@@ -927,9 +896,6 @@
             }
         };
 
-        // ==========================================
-        // บันทึกเข้า Firebase + ยิงเข้า Calendar
-        // ==========================================
         document.getElementById('bucketForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
@@ -977,7 +943,6 @@
                 price: Number(document.getElementById('itemPrice').value),
                 itemType: itemType,
                 
-                // สำหรับ Bucket
                 necessity: Number(document.getElementById('itemNecessity').value),
                 impact: Number(document.getElementById('itemImpact').value),
                 possibility: Number(document.getElementById('itemPossibility').value),
@@ -986,14 +951,12 @@
                 isTBD: isTBD,
                 calculatedDays: calculatedDays,
                 
-                // สำหรับ To-Do
                 todoMatrix: todoMatrix,
                 specificDate: specificDate,
                 startTime: startTime,
                 endTime: endTime,
                 todoRepeat: todoRepeat,
 
-                // Tracking
                 isTracking: isTracking,
                 trackType: trackType,
                 trackTarget: isTracking && trackType === 'numeric' ? Number(document.getElementById('trackTarget').value) : 0,
@@ -1025,7 +988,7 @@
                                 startTime: data.startTime,
                                 endTime: data.endTime
                             })
-                        }).then(r => console.log("ส่งเข้า Calendar สำเร็จ"));
+                        }).catch(e => console.log("Calendar sync failed", e));
                     }
                 }
                 
@@ -1045,7 +1008,7 @@
             }
         };
 
-        // เริ่มโหลดข้อมูลครั้งแรก
+        // โหลดข้อมูลเมื่อเปิดเว็บ
         loadItemsFromDB();
     </script>
 
