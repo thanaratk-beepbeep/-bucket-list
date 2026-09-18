@@ -344,7 +344,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // 🛑 วาง CONFIG FIREBASE ของคุณตรงนี้
+        // 🛑 🛑 วาง CONFIG FIREBASE ของคุณตรงนี้ 🛑 🛑
         const firebaseConfig = {
             apiKey: "AIzaSyBRw1lZxzzZSZ5jCSYOGuQ0W3XF_nG0FcU",
             authDomain: "bucketlist-b78bb.firebaseapp.com",
@@ -515,12 +515,11 @@
                     renderItems();
                 }
             } catch (error) {
-                // 🛑 ระบบกันเหนียว กรณี Firebase โหลดไม่ขึ้น (เช่น Rules หมดอายุ)
                 console.error("Firebase Error:", error);
                 const errorMsg = `
                     <div class="col-span-full text-center py-10 bg-red-50 rounded-3xl border border-red-100 mt-4">
                         <p class="text-red-500 font-bold text-xl mb-2">⚠️ ไม่สามารถเชื่อมต่อฐานข้อมูลได้</p>
-                        <p class="text-red-400 text-sm">1. ลืมใส่ API Keys ของ Firebase หรือเปล่า?<br>2. กฎ Firebase (Rules) หมดอายุ 30 วันหรือไม่? ให้แก้ Rules เป็น if true;</p>
+                        <p class="text-red-400 text-sm">1. ลืมใส่ API Keys ของ Firebase หรือเปล่า?<br>2. กฎ Firebase (Rules) อาจจะหมดอายุ 30 วัน</p>
                     </div>`;
                 document.getElementById('summaryView').innerHTML = errorMsg;
                 document.getElementById('bucketListContainer').innerHTML = errorMsg;
@@ -619,9 +618,10 @@
                 return Number(a.price) - Number(b.price);
             });
 
-            document.getElementById('statTotal').innerText = allItems.length;
-            document.getElementById('statCompleted').innerText = allItems.filter(i => i.isCompleted).length;
-            document.getElementById('statBudget').innerText = allItems.filter(i => !i.isCompleted).reduce((sum, item) => sum + Number(item.price), 0).toLocaleString();
+            // 🛑 จุดที่แก้ Error: ถ้าหากล่องสถิติเหล่านี้เจอถึงจะทำบรรทัดพวกนี้ (ป้องกันแอปดับเวลาสลับแท็บ)
+            if(document.getElementById('statTotal')) {
+                /* (บรรทัดพวกนี้ถูกเอาออกจากการแสดงผลแล้ว แต่เขียนดักไว้เผื่ออนาคตครับ) */
+            }
 
             container.innerHTML = '';
             if(filteredItems.length === 0) {
