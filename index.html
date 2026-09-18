@@ -11,6 +11,13 @@
         .modal { transition: opacity 0.25s ease; }
         body.modal-active { overflow-x: hidden; overflow-y: hidden !important; }
         .completed-item { opacity: 0.6; filter: grayscale(100%); }
+        
+        /* Animation สำหรับ Quick Win Modal */
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-pop { animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
     </style>
 </head>
 <body class="text-gray-800 antialiased">
@@ -43,26 +50,35 @@
             </div>
         </div>
 
-        <!-- 🔍 Filters Section -->
-        <div class="bg-white p-4 rounded-xl shadow-sm mb-6 flex flex-col md:flex-row gap-4">
-            <div class="flex-1">
-                <label class="block text-xs font-medium text-gray-500 mb-1">สถานะ</label>
-                <select id="filterStatus" onchange="renderItems()" class="w-full rounded-md border-gray-300 shadow-sm border p-2 text-sm focus:border-indigo-500">
-                    <option value="all">แสดงทั้งหมด</option>
-                    <option value="pending" selected>⏳ รอทำ (ยังไม่สำเร็จ)</option>
-                    <option value="completed">✅ สำเร็จแล้ว</option>
-                </select>
+        <!-- 🔍 Filters & Quick Win Section -->
+        <div class="bg-white p-4 rounded-xl shadow-sm mb-6">
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="flex-1">
+                    <label class="block text-xs font-medium text-gray-500 mb-1">สถานะ</label>
+                    <select id="filterStatus" onchange="renderItems()" class="w-full rounded-md border-gray-300 shadow-sm border p-2 text-sm focus:border-indigo-500">
+                        <option value="all">แสดงทั้งหมด</option>
+                        <option value="pending" selected>⏳ รอทำ (ยังไม่สำเร็จ)</option>
+                        <option value="completed">✅ สำเร็จแล้ว</option>
+                    </select>
+                </div>
+                <div class="flex-1">
+                    <label class="block text-xs font-medium text-gray-500 mb-1">ช่วงเวลาที่เหลือ</label>
+                    <select id="filterTimeframe" onchange="renderItems()" class="w-full rounded-md border-gray-300 shadow-sm border p-2 text-sm focus:border-indigo-500">
+                        <option value="all">ทุกช่วงเวลา</option>
+                        <option value="urgent">⏰ โค้งสุดท้าย / เลยกำหนด (< 14 วัน)</option>
+                        <option value="short">ระยะสั้น (เหลือ < 3 เดือน)</option>
+                        <option value="medium">ระยะกลาง (เหลือ < 1 ปี)</option>
+                        <option value="long">ระยะยาว (เหลือ > 1 ปี)</option>
+                        <option value="tbd">รอเหตุการณ์ (TBD)</option>
+                    </select>
+                </div>
             </div>
-            <div class="flex-1">
-                <label class="block text-xs font-medium text-gray-500 mb-1">ช่วงเวลาที่เหลือ</label>
-                <select id="filterTimeframe" onchange="renderItems()" class="w-full rounded-md border-gray-300 shadow-sm border p-2 text-sm focus:border-indigo-500">
-                    <option value="all">ทุกช่วงเวลา</option>
-                    <option value="urgent">⏰ โค้งสุดท้าย / เลยกำหนด (< 14 วัน)</option>
-                    <option value="short">ระยะสั้น (เหลือ < 3 เดือน)</option>
-                    <option value="medium">ระยะกลาง (เหลือ < 1 ปี)</option>
-                    <option value="long">ระยะยาว (เหลือ > 1 ปี)</option>
-                    <option value="tbd">รอเหตุการณ์ (TBD)</option>
-                </select>
+            
+            <!-- 🪄 ปุ่ม Quick Win -->
+            <div class="mt-4 pt-4 border-t border-gray-100 flex justify-center">
+                <button onclick="suggestQuickWin()" class="bg-gradient-to-r from-pink-500 to-orange-400 hover:from-pink-600 hover:to-orange-500 text-white font-bold py-2 px-6 rounded-full shadow-md transition transform hover:scale-105 flex items-center gap-2">
+                    <span class="text-xl">🪄</span> ต้องการ Heal ใจ (สุ่ม Quick Win)
+                </button>
             </div>
         </div>
 
@@ -72,7 +88,40 @@
         </div>
     </div>
 
-    <!-- 🛠 Modal สำหรับเพิ่ม/แก้ไขข้อมูล -->
+    <!-- 🌟 Modal สำหรับ Quick Win Suggestion -->
+    <div class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-[60] px-4" id="quickWinModal">
+        <div class="modal-overlay absolute w-full h-full bg-black opacity-60 backdrop-blur-sm" onclick="toggleModal('quickWinModal')"></div>
+        <div class="modal-container bg-white w-full max-w-sm mx-auto rounded-2xl shadow-2xl z-[60] animate-pop">
+            <div class="p-6 text-center">
+                <div class="text-5xl mb-4">🎁</div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">ทำสิ่งนี้ดูสิ!</h3>
+                <p class="text-sm text-gray-500 mb-6">เป้าหมายเล็กๆ ที่ทำได้ง่ายและใช้เงินน้อย เพื่อเติมไฟให้คุณวันนี้</p>
+                
+                <div class="bg-gradient-to-br from-pink-50 to-orange-50 p-5 rounded-xl border border-pink-100 mb-6">
+                    <h4 id="qwName" class="text-xl font-bold text-pink-600 mb-2 leading-tight">ชื่อเป้าหมาย</h4>
+                    <div class="flex justify-center gap-4 text-sm font-medium text-gray-600">
+                        <span id="qwPrice">💰 ฿0</span>
+                        <span>🟢 ทำได้ง่าย</span>
+                    </div>
+                </div>
+                
+                <div class="flex flex-col gap-3">
+                    <button onclick="doQuickWinNow()" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-4 rounded-xl shadow transition w-full">
+                        ✅ ฉันจะทำสิ่งนี้แหละ!
+                    </button>
+                    <button onclick="suggestQuickWin()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-xl transition w-full">
+                        🎲 ขออันอื่น
+                    </button>
+                    <button onclick="toggleModal('quickWinModal')" class="text-gray-400 hover:text-gray-600 text-sm mt-2">
+                        ปิดหน้าต่างนี้
+                    </button>
+                </div>
+                <input type="hidden" id="qwCurrentId" value="">
+            </div>
+        </div>
+    </div>
+
+    <!-- 🛠 Modal สำหรับเพิ่ม/แก้ไขข้อมูล (ตัวเดิม) -->
     <div class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50 px-4" id="mainModal">
         <div class="modal-overlay absolute w-full h-full bg-black opacity-50" onclick="toggleModal('mainModal')"></div>
         <div class="modal-container bg-white w-full max-w-md mx-auto rounded-xl shadow-2xl z-50 overflow-y-auto max-h-[90vh]">
@@ -140,7 +189,6 @@
                         </select>
                     </div>
 
-                    <!-- 📈 ระบบ Tracking แบบยืดหยุ่น (อัปเกรดใหม่) -->
                     <div class="bg-blue-50 p-3 rounded-lg border border-blue-100">
                         <label class="flex items-center space-x-2 text-sm text-blue-800 font-semibold cursor-pointer mb-2">
                             <input type="checkbox" id="itemTracking" class="rounded text-blue-600 focus:ring-blue-500 w-4 h-4">
@@ -148,7 +196,6 @@
                         </label>
                         
                         <div id="trackingFields" class="hidden space-y-3 border-t border-blue-200 pt-2">
-                            <!-- เลือกประเภท Tracking -->
                             <div>
                                 <label class="block text-[11px] text-gray-600 uppercase font-bold">รูปแบบการติดตาม</label>
                                 <select id="trackType" class="mt-1 block w-full rounded-md border p-2 text-sm bg-white">
@@ -157,7 +204,6 @@
                                 </select>
                             </div>
 
-                            <!-- หมวดหมู่: แบบตัวเลข -->
                             <div id="trackNumericFields" class="space-y-2">
                                 <div class="flex gap-2">
                                     <div class="w-1/2">
@@ -175,12 +221,9 @@
                                 </div>
                             </div>
 
-                            <!-- หมวดหมู่: แบบเช็คลิสต์ -->
                             <div id="trackChecklistFields" class="hidden space-y-2">
                                 <label class="block text-[11px] text-gray-600 uppercase font-bold">รายการขั้นตอน / Milestones</label>
-                                <ul id="checklistContainer" class="space-y-2">
-                                    <!-- Checklists จะถูกเพิ่มด้วย JS ตรงนี้ -->
-                                </ul>
+                                <ul id="checklistContainer" class="space-y-2"></ul>
                                 <button type="button" onclick="addChecklistItem()" class="text-xs text-blue-600 hover:text-blue-800 font-bold bg-white border border-blue-200 rounded px-3 py-1 mt-1 w-full text-center">+ เพิ่มขั้นตอน</button>
                             </div>
                         </div>
@@ -218,6 +261,56 @@
         let allItems = [];
         const unitLabels = { "weeks": "สัปดาห์", "months": "เดือน", "years": "ปี" };
 
+        // ------------------ Quick Win Feature (ใหม่) ------------------
+        
+        window.suggestQuickWin = function() {
+            // กรองหาอันที่ทำง่าย (ระดับ 3), ใช้เงินไม่เกิน 1000 บาท, และยังไม่ทำ
+            const quickWins = allItems.filter(item => 
+                !item.isCompleted && 
+                Number(item.possibility) === 3 && 
+                Number(item.price) <= 1000
+            );
+
+            if (quickWins.length === 0) {
+                alert("ว้าก! ตอนนี้ไม่มีเป้าหมายแบบทำได้ง่ายๆ หรือใช้งบน้อยๆ เลยครับ ลองเพิ่มเป้าหมายเล็กๆ เข้าไปสัก 1-2 อันดูสิครับ (เช่น กินของอร่อยๆ, ดูหนังเรื่องโปรด)");
+                return;
+            }
+
+            // สุ่ม 1 อันจาก Array
+            const randomIndex = Math.floor(Math.random() * quickWins.length);
+            const luckyItem = quickWins[randomIndex];
+
+            // แสดงข้อมูลใน Modal
+            document.getElementById('qwName').innerText = luckyItem.name;
+            document.getElementById('qwPrice').innerText = `💰 ฿${Number(luckyItem.price).toLocaleString()}`;
+            document.getElementById('qwCurrentId').value = luckyItem.id;
+
+            // เปิด Modal (ถ้ายังไม่เปิด)
+            const modal = document.getElementById('quickWinModal');
+            if (modal.classList.contains('opacity-0')) {
+                toggleModal('quickWinModal');
+            }
+        };
+
+        // ฟังก์ชันเมื่อกดยืนยันทำ Quick Win สำเร็จ
+        window.doQuickWinNow = async function() {
+            const id = document.getElementById('qwCurrentId').value;
+            if(!id) return;
+            
+            try {
+                await updateDoc(doc(db, "bucketlist", id), { isCompleted: true });
+                toggleModal('quickWinModal'); // ปิดหน้าต่าง
+                
+                // เอฟเฟกต์พลุเบาๆ ด้วยการ Alert หรือถ้าอยากเล่นใหญ่หา JS Confetti มาใส่ได้ครับ
+                setTimeout(() => {
+                    alert("เก่งมากครับ! 🎉 ขอให้มีความสุขกับรางวัลเล็กๆ ชิ้นนี้นะครับ");
+                    loadItemsFromDB(); // โหลดข้อมูลใหม่
+                }, 300);
+            } catch (error) {
+                console.error("Error setting quick win:", error);
+            }
+        };
+
         // ------------------ UI Event Listeners ------------------
 
         document.getElementById('itemTBD').addEventListener('change', function() {
@@ -237,12 +330,10 @@
             const trackFields = document.getElementById('trackingFields');
             if(this.checked) {
                 trackFields.classList.remove('hidden');
-                // ค่าตั้งต้นเผื่อไว้
                 if(!document.getElementById('trackTarget').value) {
                     document.getElementById('trackTarget').value = document.getElementById('itemPrice').value || 1;
                     document.getElementById('trackUnit').value = 'บาท';
                 }
-                // เช็คว่ามีรายการ checklist หรือยัง ถ้ายังให้ใส่ 1 อันว่างๆ
                 if(document.getElementById('checklistContainer').children.length === 0){
                     addChecklistItem();
                 }
@@ -261,7 +352,6 @@
             }
         });
 
-        // 🛠 ฟังก์ชันเพิ่มกล่องกรอก Checklist
         window.addChecklistItem = function(text = '', isDone = false) {
             const container = document.getElementById('checklistContainer');
             const li = document.createElement('li');
@@ -329,7 +419,6 @@
                 return matchStatus && matchTime;
             });
 
-            // Sorting Logic
             filteredItems.sort((a, b) => {
                 const scoreA = (Number(a.necessity) * 2) + (Number(a.impact) * 2) + getUrgencyScore(a.isTBD, a.daysLeft) + Number(a.possibility);
                 const scoreB = (Number(b.necessity) * 2) + (Number(b.impact) * 2) + getUrgencyScore(b.isTBD, b.daysLeft) + Number(b.possibility);
@@ -355,7 +444,6 @@
                 const score = (Number(item.necessity) * 2) + (Number(item.impact) * 2) + getUrgencyScore(item.isTBD, item.daysLeft) + Number(item.possibility);
                 const isDone = item.isCompleted;
 
-                // Badge
                 let badgeHtml = '';
                 if (!item.isTBD && !isDone) {
                     if (item.daysLeft < 0) badgeHtml = `<span class="bg-red-100 text-red-700 text-[10px] px-2 py-1 rounded-full font-bold shadow-sm animate-pulse">🚨 เลยกำหนด ${Math.abs(item.daysLeft)} วัน</span>`;
@@ -369,13 +457,10 @@
 
                 const targetText = item.isTBD ? "ยังไม่มีกำหนด" : `ภายใน ${item.timeNumber} ${unitLabels[item.timeUnit]}`;
 
-                // 📈 Tracking UI HTML
                 let trackingHtml = '';
                 if (item.isTracking) {
                     let percent = 0;
-                    
                     if (item.trackType === 'numeric' && item.trackTarget > 0) {
-                        // แบบ Numeric
                         percent = Math.min((item.trackCurrent / item.trackTarget) * 100, 100).toFixed(0);
                         let barColor = percent >= 100 ? 'bg-green-500' : 'bg-blue-500';
 
@@ -393,7 +478,6 @@
                         `;
                     } 
                     else if (item.trackType === 'checklist' && item.checklists && item.checklists.length > 0) {
-                        // แบบ Checklist
                         let totalChecks = item.checklists.length;
                         let doneChecks = item.checklists.filter(c => c.isDone).length;
                         percent = Math.min((doneChecks / totalChecks) * 100, 100).toFixed(0);
@@ -412,15 +496,13 @@
                         trackingHtml = `
                             <div class="mt-3 bg-purple-50 p-2.5 rounded-lg border border-purple-100">
                                 <div class="flex justify-between items-end mb-2">
-                                    <span class="text-[11px] text-purple-600 font-bold uppercase tracking-wider">ขั้นตอนสู่เป้าหมาย</span>
+                                    <span class="text-[11px] text-purple-600 font-bold uppercase tracking-wider">ขั้นตอน</span>
                                     <span class="text-xs font-bold text-gray-700">${doneChecks}/${totalChecks} (${percent}%)</span>
                                 </div>
                                 <div class="w-full bg-gray-200 rounded-full h-1.5 mb-3">
                                     <div class="${barColor} h-1.5 rounded-full transition-all duration-500" style="width: ${percent}%"></div>
                                 </div>
-                                <div class="pl-1">
-                                    ${listHtml}
-                                </div>
+                                <div class="pl-1">${listHtml}</div>
                             </div>
                         `;
                     }
@@ -466,7 +548,6 @@
 
         // ------------------ Actions Updates ------------------
 
-        // อัปเดต Numeric
         window.promptQuickUpdate = async function(id, currentVal) {
             const newVal = prompt("อัปเดตตัวเลขความคืบหน้าล่าสุด:", currentVal);
             if (newVal !== null && newVal !== "" && !isNaN(newVal)) {
@@ -475,13 +556,12 @@
             }
         };
 
-        // อัปเดต Checklist หน้าจอ (คลิกปุ๊บ บันทึกปั๊บ)
         window.toggleChecklistItem = async function(id, checkIndex, isDone) {
             const item = allItems.find(i => i.id === id);
             if(item && item.checklists) {
                 item.checklists[checkIndex].isDone = isDone;
                 await updateDoc(doc(db, "bucketlist", id), { checklists: item.checklists });
-                renderItems(); // รีโหลดหน้าจอไวๆ โดยใช้ข้อมูลใน Memory (ไม่ต้องโหลด DB ใหม่ให้เสียเวลา)
+                renderItems(); 
             }
         };
 
@@ -489,7 +569,7 @@
             document.getElementById('bucketForm').reset();
             document.getElementById('editId').value = ""; 
             document.getElementById('modalTitle').innerText = "✨ เพิ่มเป้าหมายใหม่";
-            document.getElementById('checklistContainer').innerHTML = ''; // เคลียร์ checklist
+            document.getElementById('checklistContainer').innerHTML = '';
             
             document.getElementById('itemTBD').dispatchEvent(new Event('change'));
             document.getElementById('itemTracking').checked = false;
@@ -517,7 +597,6 @@
             document.getElementById('timeUnit').value = item.timeUnit;
             document.getElementById('itemTBD').dispatchEvent(new Event('change'));
 
-            // โหลด Tracking
             const isTracking = item.isTracking || false;
             document.getElementById('itemTracking').checked = isTracking;
             document.getElementById('trackType').value = item.trackType || 'numeric';
@@ -528,7 +607,6 @@
             document.getElementById('itemTracking').dispatchEvent(new Event('change'));
             document.getElementById('trackType').dispatchEvent(new Event('change'));
 
-            // โหลด Checklist เข้าฟอร์ม
             const chkContainer = document.getElementById('checklistContainer');
             chkContainer.innerHTML = '';
             if (item.trackType === 'checklist' && item.checklists) {
@@ -536,7 +614,7 @@
                     addChecklistItem(chk.text, chk.isDone);
                 });
             } else if (isTracking && item.trackType === 'checklist') {
-                addChecklistItem(); // ใส่ว่างๆ 1 อันถ้าไม่มี
+                addChecklistItem();
             }
 
             toggleModal('mainModal');
@@ -562,7 +640,6 @@
             const isTracking = document.getElementById('itemTracking').checked;
             const trackType = document.getElementById('trackType').value;
             
-            // ดึงข้อมูล Checklist จาก DOM
             const checklists = [];
             if (isTracking && trackType === 'checklist') {
                 const listItems = document.querySelectorAll('#checklistContainer li');
@@ -631,11 +708,21 @@
 
     <!-- UI Script -->
     <script>
+        // ปรับปรุงฟังก์ชันเปิด/ปิด Modal ให้รองรับหลายอัน
         function toggleModal(modalID) {
             const modal = document.getElementById(modalID);
             modal.classList.toggle('opacity-0');
             modal.classList.toggle('pointer-events-none');
-            document.body.classList.toggle('modal-active');
+            
+            // ป้องกันการ Scroll หน้าจอหลัง (ถ้ามี Modal ใดๆ เปิดอยู่)
+            const anyModalOpen = !document.getElementById('mainModal').classList.contains('opacity-0') || 
+                                 !document.getElementById('quickWinModal').classList.contains('opacity-0');
+            
+            if (anyModalOpen) {
+                document.body.classList.add('modal-active');
+            } else {
+                document.body.classList.remove('modal-active');
+            }
         }
     </script>
 </body>
