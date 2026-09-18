@@ -95,21 +95,24 @@
                         <label class="block text-sm font-medium text-gray-700">2. ราคา/งบประมาณ (บาท)</label>
                         <input type="number" id="itemPrice" required min="0" class="mt-1 block w-full rounded-md border p-2 text-sm" placeholder="0 = ฟรี">
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">3. ความจำเป็น</label>
-                        <select id="itemNecessity" class="mt-1 block w-full rounded-md border p-2 text-sm">
-                            <option value="3">🔥 ต้องทำให้ได้ (Must have)</option>
-                            <option value="2">⭐ ควรทำ (Should have)</option>
-                            <option value="1">☁️ แค่ความอยาก (Nice to have)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">4. ผลกระทบหากไม่ได้ทำ</label>
-                        <select id="itemImpact" class="mt-1 block w-full rounded-md border p-2 text-sm">
-                            <option value="3">😭 เสียดายมาก / กระทบหนัก</option>
-                            <option value="2">🥲 เสียดายปานกลาง</option>
-                            <option value="1">😌 ไม่เป็นไร</option>
-                        </select>
+                    
+                    <div class="flex gap-2">
+                        <div class="w-1/2">
+                            <label class="block text-sm font-medium text-gray-700">3. ความจำเป็น</label>
+                            <select id="itemNecessity" class="mt-1 block w-full rounded-md border p-2 text-sm">
+                                <option value="3">🔥 ต้องทำให้ได้</option>
+                                <option value="2">⭐ ควรทำ</option>
+                                <option value="1">☁️ แค่ความอยาก</option>
+                            </select>
+                        </div>
+                        <div class="w-1/2">
+                            <label class="block text-sm font-medium text-gray-700">4. ผลกระทบ</label>
+                            <select id="itemImpact" class="mt-1 block w-full rounded-md border p-2 text-sm">
+                                <option value="3">😭 กระทบหนัก</option>
+                                <option value="2">🥲 ปานกลาง</option>
+                                <option value="1">😌 ไม่เป็นไร</option>
+                            </select>
+                        </div>
                     </div>
                     
                     <div class="bg-gray-50 p-3 rounded-lg border">
@@ -137,27 +140,48 @@
                         </select>
                     </div>
 
-                    <!-- 📈 ระบบ Tracking (ใหม่) -->
+                    <!-- 📈 ระบบ Tracking แบบยืดหยุ่น (อัปเกรดใหม่) -->
                     <div class="bg-blue-50 p-3 rounded-lg border border-blue-100">
-                        <label class="flex items-center space-x-2 text-sm text-blue-800 font-semibold cursor-pointer">
+                        <label class="flex items-center space-x-2 text-sm text-blue-800 font-semibold cursor-pointer mb-2">
                             <input type="checkbox" id="itemTracking" class="rounded text-blue-600 focus:ring-blue-500 w-4 h-4">
-                            <span>📈 เปิดระบบติดตามความคืบหน้า (Tracking)</span>
+                            <span>📈 เปิดระบบติดตามความคืบหน้า</span>
                         </label>
                         
-                        <div id="trackingFields" class="hidden space-y-2 mt-3">
-                            <div class="flex gap-2">
-                                <div class="w-1/2">
-                                    <label class="block text-[11px] text-gray-600 uppercase font-bold">เป้าหมายที่จะไปให้ถึง</label>
-                                    <input type="number" id="trackTarget" min="1" class="mt-1 block w-full rounded-md border p-2 text-sm" placeholder="เช่น 100000, 5">
+                        <div id="trackingFields" class="hidden space-y-3 border-t border-blue-200 pt-2">
+                            <!-- เลือกประเภท Tracking -->
+                            <div>
+                                <label class="block text-[11px] text-gray-600 uppercase font-bold">รูปแบบการติดตาม</label>
+                                <select id="trackType" class="mt-1 block w-full rounded-md border p-2 text-sm bg-white">
+                                    <option value="numeric">📊 แบบตัวเลข (เช่น เก็บเงิน, หน่วยกิต)</option>
+                                    <option value="checklist">✅ แบบขั้นตอนย่อย (เช่น ระดับชั้น, แพลนทริป)</option>
+                                </select>
+                            </div>
+
+                            <!-- หมวดหมู่: แบบตัวเลข -->
+                            <div id="trackNumericFields" class="space-y-2">
+                                <div class="flex gap-2">
+                                    <div class="w-1/2">
+                                        <label class="block text-[11px] text-gray-600 uppercase font-bold">เป้าหมายตัวเลข</label>
+                                        <input type="number" id="trackTarget" min="1" class="mt-1 block w-full rounded-md border p-2 text-sm" placeholder="100000">
+                                    </div>
+                                    <div class="w-1/2">
+                                        <label class="block text-[11px] text-gray-600 uppercase font-bold">หน่วยเรียก</label>
+                                        <input type="text" id="trackUnit" class="mt-1 block w-full rounded-md border p-2 text-sm" placeholder="บาท, หน่วยกิต">
+                                    </div>
                                 </div>
-                                <div class="w-1/2">
-                                    <label class="block text-[11px] text-gray-600 uppercase font-bold">หน่วยเรียก</label>
-                                    <input type="text" id="trackUnit" class="mt-1 block w-full rounded-md border p-2 text-sm" placeholder="เช่น บาท, คอร์ส, เล่ม">
+                                <div>
+                                    <label class="block text-[11px] text-gray-600 uppercase font-bold">ปัจจุบันทำได้ (เริ่มต้น)</label>
+                                    <input type="number" id="trackCurrent" min="0" class="mt-1 block w-full rounded-md border p-2 text-sm" value="0">
                                 </div>
                             </div>
-                            <div>
-                                <label class="block text-[11px] text-gray-600 uppercase font-bold">ตอนนี้ทำได้เท่าไรแล้ว?</label>
-                                <input type="number" id="trackCurrent" min="0" class="mt-1 block w-full rounded-md border p-2 text-sm" placeholder="0" value="0">
+
+                            <!-- หมวดหมู่: แบบเช็คลิสต์ -->
+                            <div id="trackChecklistFields" class="hidden space-y-2">
+                                <label class="block text-[11px] text-gray-600 uppercase font-bold">รายการขั้นตอน / Milestones</label>
+                                <ul id="checklistContainer" class="space-y-2">
+                                    <!-- Checklists จะถูกเพิ่มด้วย JS ตรงนี้ -->
+                                </ul>
+                                <button type="button" onclick="addChecklistItem()" class="text-xs text-blue-600 hover:text-blue-800 font-bold bg-white border border-blue-200 rounded px-3 py-1 mt-1 w-full text-center">+ เพิ่มขั้นตอน</button>
                             </div>
                         </div>
                     </div>
@@ -194,7 +218,8 @@
         let allItems = [];
         const unitLabels = { "weeks": "สัปดาห์", "months": "เดือน", "years": "ปี" };
 
-        // Toggle สถานะเวลา TBD
+        // ------------------ UI Event Listeners ------------------
+
         document.getElementById('itemTBD').addEventListener('change', function() {
             const isChecked = this.checked;
             document.getElementById('timeNumber').disabled = isChecked;
@@ -208,28 +233,54 @@
             }
         });
 
-        // Toggle แสดงช่องกรอก Tracking
         document.getElementById('itemTracking').addEventListener('change', function() {
             const trackFields = document.getElementById('trackingFields');
             if(this.checked) {
                 trackFields.classList.remove('hidden');
-                // ถ้าช่องเป้าหมายว่าง ให้ดึงตัวเลขจากงบประมาณมาใส่เป็นค่าตั้งต้นเผื่อไว้
+                // ค่าตั้งต้นเผื่อไว้
                 if(!document.getElementById('trackTarget').value) {
                     document.getElementById('trackTarget').value = document.getElementById('itemPrice').value || 1;
                     document.getElementById('trackUnit').value = 'บาท';
+                }
+                // เช็คว่ามีรายการ checklist หรือยัง ถ้ายังให้ใส่ 1 อันว่างๆ
+                if(document.getElementById('checklistContainer').children.length === 0){
+                    addChecklistItem();
                 }
             } else {
                 trackFields.classList.add('hidden');
             }
         });
 
-        // ⏳ คำนวณวันเหลือแบบ Real-time
+        document.getElementById('trackType').addEventListener('change', function() {
+            if(this.value === 'numeric') {
+                document.getElementById('trackNumericFields').classList.remove('hidden');
+                document.getElementById('trackChecklistFields').classList.add('hidden');
+            } else {
+                document.getElementById('trackNumericFields').classList.add('hidden');
+                document.getElementById('trackChecklistFields').classList.remove('hidden');
+            }
+        });
+
+        // 🛠 ฟังก์ชันเพิ่มกล่องกรอก Checklist
+        window.addChecklistItem = function(text = '', isDone = false) {
+            const container = document.getElementById('checklistContainer');
+            const li = document.createElement('li');
+            li.className = 'flex gap-2 items-center';
+            li.innerHTML = `
+                <input type="checkbox" class="chk-status rounded text-blue-500 w-4 h-4 cursor-pointer" ${isDone ? 'checked' : ''}>
+                <input type="text" class="chk-text w-full text-sm border border-gray-300 rounded p-1.5 focus:border-blue-500" value="${text}" placeholder="เช่น ผ่าน N5, จองโรงแรม...">
+                <button type="button" onclick="this.parentElement.remove()" class="text-gray-400 hover:text-red-500 font-bold text-lg">&times;</button>
+            `;
+            container.appendChild(li);
+        };
+
+        // ------------------ Core Logic ------------------
+
         function calculateDaysLeft(createdAt, calculatedDays, isTBD) {
             if (isTBD) return Infinity;
             const createdDate = new Date(createdAt);
             const deadlineDate = new Date(createdDate.getTime() + (calculatedDays * 24 * 60 * 60 * 1000));
-            const today = new Date();
-            const diffTime = deadlineDate - today;
+            const diffTime = deadlineDate - new Date();
             return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         }
 
@@ -245,7 +296,7 @@
                 renderItems();
             } catch (error) {
                 console.error("Error loading docs:", error);
-                document.getElementById('bucketListContainer').innerHTML = '<div class="col-span-full text-center text-red-500 py-10">ไม่สามารถเชื่อมต่อฐานข้อมูลได้</div>';
+                document.getElementById('bucketListContainer').innerHTML = '<div class="col-span-full text-center text-red-500 py-10">เชื่อมต่อฐานข้อมูลล้มเหลว</div>';
             }
         }
 
@@ -256,21 +307,6 @@
             if(daysLeft <= 90) return 3;
             if(daysLeft <= 365) return 2;
             return 1;
-        }
-
-        function sortItems(items) {
-            return items.sort((a, b) => {
-                const urgencyA = getUrgencyScore(a.isTBD, a.daysLeft);
-                const urgencyB = getUrgencyScore(b.isTBD, b.daysLeft);
-                const scoreA = (Number(a.necessity) * 2) + (Number(a.impact) * 2) + urgencyA + Number(a.possibility);
-                const scoreB = (Number(b.necessity) * 2) + (Number(b.impact) * 2) + urgencyB + Number(b.possibility);
-
-                if (scoreA !== scoreB) return scoreB - scoreA;
-                if (a.price !== b.price) return Number(a.price) - Number(b.price);
-                const daysA = a.isTBD ? Infinity : a.daysLeft;
-                const daysB = b.isTBD ? Infinity : b.daysLeft;
-                return daysA - daysB; 
-            });
         }
 
         window.renderItems = function() {
@@ -293,7 +329,17 @@
                 return matchStatus && matchTime;
             });
 
-            filteredItems = sortItems(filteredItems);
+            // Sorting Logic
+            filteredItems.sort((a, b) => {
+                const scoreA = (Number(a.necessity) * 2) + (Number(a.impact) * 2) + getUrgencyScore(a.isTBD, a.daysLeft) + Number(a.possibility);
+                const scoreB = (Number(b.necessity) * 2) + (Number(b.impact) * 2) + getUrgencyScore(b.isTBD, b.daysLeft) + Number(b.possibility);
+
+                if (scoreA !== scoreB) return scoreB - scoreA;
+                if (a.price !== b.price) return Number(a.price) - Number(b.price);
+                const daysA = a.isTBD ? Infinity : a.daysLeft;
+                const daysB = b.isTBD ? Infinity : b.daysLeft;
+                return daysA - daysB; 
+            });
 
             document.getElementById('statTotal').innerText = allItems.length;
             document.getElementById('statCompleted').innerText = allItems.filter(i => i.isCompleted).length;
@@ -306,20 +352,15 @@
             }
 
             filteredItems.forEach((item, index) => {
-                const urgency = getUrgencyScore(item.isTBD, item.daysLeft);
-                const score = (Number(item.necessity) * 2) + (Number(item.impact) * 2) + urgency + Number(item.possibility);
+                const score = (Number(item.necessity) * 2) + (Number(item.impact) * 2) + getUrgencyScore(item.isTBD, item.daysLeft) + Number(item.possibility);
                 const isDone = item.isCompleted;
 
-                // 🎨 UI ป้ายเตือน
+                // Badge
                 let badgeHtml = '';
                 if (!item.isTBD && !isDone) {
-                    if (item.daysLeft < 0) {
-                        badgeHtml = `<span class="bg-red-100 text-red-700 text-[10px] px-2 py-1 rounded-full font-bold shadow-sm animate-pulse">🚨 เลยกำหนด ${Math.abs(item.daysLeft)} วัน</span>`;
-                    } else if (item.daysLeft <= 14) {
-                        badgeHtml = `<span class="bg-orange-100 text-orange-700 text-[10px] px-2 py-1 rounded-full font-bold shadow-sm">⏰ เหลือ ${item.daysLeft} วัน</span>`;
-                    } else {
-                        badgeHtml = `<span class="bg-blue-50 text-blue-600 text-[10px] px-2 py-1 rounded-full font-medium border border-blue-100">📅 เหลือ ${item.daysLeft} วัน</span>`;
-                    }
+                    if (item.daysLeft < 0) badgeHtml = `<span class="bg-red-100 text-red-700 text-[10px] px-2 py-1 rounded-full font-bold shadow-sm animate-pulse">🚨 เลยกำหนด ${Math.abs(item.daysLeft)} วัน</span>`;
+                    else if (item.daysLeft <= 14) badgeHtml = `<span class="bg-orange-100 text-orange-700 text-[10px] px-2 py-1 rounded-full font-bold shadow-sm">⏰ เหลือ ${item.daysLeft} วัน</span>`;
+                    else badgeHtml = `<span class="bg-blue-50 text-blue-600 text-[10px] px-2 py-1 rounded-full font-medium border border-blue-100">📅 เหลือ ${item.daysLeft} วัน</span>`;
                 } else if (isDone) {
                     badgeHtml = `<span class="bg-green-100 text-green-700 text-[10px] px-2 py-1 rounded-full font-bold">✅ สำเร็จแล้ว</span>`;
                 } else {
@@ -328,32 +369,68 @@
 
                 const targetText = item.isTBD ? "ยังไม่มีกำหนด" : `ภายใน ${item.timeNumber} ${unitLabels[item.timeUnit]}`;
 
-                // 📈 UI แถบ Tracking
+                // 📈 Tracking UI HTML
                 let trackingHtml = '';
-                if (item.isTracking && item.trackTarget > 0) {
-                    // คำนวณเปอร์เซ็นต์ (ไม่ให้เกิน 100%)
-                    let percent = Math.min((item.trackCurrent / item.trackTarget) * 100, 100).toFixed(0);
-                    let barColor = percent >= 100 ? 'bg-green-500' : 'bg-blue-500';
+                if (item.isTracking) {
+                    let percent = 0;
+                    
+                    if (item.trackType === 'numeric' && item.trackTarget > 0) {
+                        // แบบ Numeric
+                        percent = Math.min((item.trackCurrent / item.trackTarget) * 100, 100).toFixed(0);
+                        let barColor = percent >= 100 ? 'bg-green-500' : 'bg-blue-500';
 
-                    trackingHtml = `
-                        <div class="mt-3 bg-gray-50 p-2.5 rounded-lg border border-gray-100">
-                            <div class="flex justify-between items-end mb-1">
-                                <span class="text-[11px] text-gray-500 font-bold uppercase tracking-wider">ความคืบหน้า</span>
-                                <span class="text-xs font-bold text-gray-700">${Number(item.trackCurrent).toLocaleString()} / ${Number(item.trackTarget).toLocaleString()} <span class="text-gray-500 font-normal">${item.trackUnit}</span> (${percent}%)</span>
+                        trackingHtml = `
+                            <div class="mt-3 bg-gray-50 p-2.5 rounded-lg border border-gray-100">
+                                <div class="flex justify-between items-end mb-1">
+                                    <span class="text-[11px] text-gray-500 font-bold uppercase tracking-wider">ความคืบหน้า</span>
+                                    <span class="text-xs font-bold text-gray-700">${Number(item.trackCurrent).toLocaleString()} / ${Number(item.trackTarget).toLocaleString()} <span class="text-gray-500 font-normal">${item.trackUnit}</span> (${percent}%)</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="${barColor} h-2 rounded-full transition-all duration-500" style="width: ${percent}%"></div>
+                                </div>
+                                ${!isDone ? `<button onclick="promptQuickUpdate('${item.id}',${item.trackCurrent})" class="text-[10px] text-blue-600 hover:text-blue-800 font-bold mt-2 flex items-center gap-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg> อัปเดตตัวเลข</button>` : ''}
                             </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div class="${barColor} h-2 rounded-full transition-all duration-500" style="width: ${percent}%"></div>
+                        `;
+                    } 
+                    else if (item.trackType === 'checklist' && item.checklists && item.checklists.length > 0) {
+                        // แบบ Checklist
+                        let totalChecks = item.checklists.length;
+                        let doneChecks = item.checklists.filter(c => c.isDone).length;
+                        percent = Math.min((doneChecks / totalChecks) * 100, 100).toFixed(0);
+                        let barColor = percent >= 100 ? 'bg-green-500' : 'bg-purple-500';
+
+                        let listHtml = '';
+                        item.checklists.forEach((chk, idx) => {
+                            listHtml += `
+                                <label class="flex items-start space-x-2 text-sm cursor-pointer mb-1 group">
+                                    <input type="checkbox" class="mt-1 rounded text-purple-600 focus:ring-purple-500" ${chk.isDone ? 'checked' : ''} onchange="toggleChecklistItem('${item.id}', ${idx}, this.checked)" ${isDone ? 'disabled' : ''}>
+                                    <span class="group-hover:text-purple-700 transition ${chk.isDone ? 'line-through text-gray-400' : 'text-gray-700'}">${chk.text}</span>
+                                </label>
+                            `;
+                        });
+
+                        trackingHtml = `
+                            <div class="mt-3 bg-purple-50 p-2.5 rounded-lg border border-purple-100">
+                                <div class="flex justify-between items-end mb-2">
+                                    <span class="text-[11px] text-purple-600 font-bold uppercase tracking-wider">ขั้นตอนสู่เป้าหมาย</span>
+                                    <span class="text-xs font-bold text-gray-700">${doneChecks}/${totalChecks} (${percent}%)</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-1.5 mb-3">
+                                    <div class="${barColor} h-1.5 rounded-full transition-all duration-500" style="width: ${percent}%"></div>
+                                </div>
+                                <div class="pl-1">
+                                    ${listHtml}
+                                </div>
                             </div>
-                            ${!isDone ? `<button onclick="promptQuickUpdate('${item.id}',${item.trackCurrent})" class="text-[10px] text-blue-600 hover:text-blue-800 font-bold mt-2 flex items-center gap-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg> อัปเดตความคืบหน้า</button>` : ''}
-                        </div>
-                    `;
+                        `;
+                    }
                 }
 
                 const card = `
                     <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition p-5 border-l-4 ${isDone ? 'border-gray-400 completed-item' : (index === 0 && statusFilter === 'pending' ? 'border-yellow-400' : 'border-indigo-400')} relative flex flex-col h-full">
                         ${!isDone && index === 0 && statusFilter === 'pending' ? '<span class="absolute -top-3 -right-3 text-3xl">👑</span>' : ''}
                         
-                        <div class="flex justify-between items-start mb-3">
+                        <div class="flex justify-between items-start mb-2">
                             <h3 class="text-lg font-bold ${isDone ? 'line-through text-gray-500' : 'text-gray-800'} pr-2 leading-tight">${item.name}</h3>
                             <div class="flex flex-col items-end gap-1">
                                 <span class="bg-gray-100 text-gray-600 text-[11px] font-bold px-2 py-1 rounded-full whitespace-nowrap">Score: ${score}</span>
@@ -387,18 +464,24 @@
             });
         };
 
-        // ------------------ Actions ------------------
+        // ------------------ Actions Updates ------------------
 
-        // Pop-up อัปเดตตัวเลขความคืบหน้าอย่างรวดเร็ว (ไม่ต้องเข้าหน้าแก้ไข)
+        // อัปเดต Numeric
         window.promptQuickUpdate = async function(id, currentVal) {
-            const newVal = prompt("อัปเดตตัวเลขความคืบหน้าล่าสุดของคุณ:", currentVal);
+            const newVal = prompt("อัปเดตตัวเลขความคืบหน้าล่าสุด:", currentVal);
             if (newVal !== null && newVal !== "" && !isNaN(newVal)) {
-                try {
-                    await updateDoc(doc(db, "bucketlist", id), { trackCurrent: Number(newVal) });
-                    loadItemsFromDB(); // โหลดใหม่เพื่อให้หลอด Progress ขยับ
-                } catch (error) {
-                    console.error("Error updating progress:", error);
-                }
+                await updateDoc(doc(db, "bucketlist", id), { trackCurrent: Number(newVal) });
+                loadItemsFromDB();
+            }
+        };
+
+        // อัปเดต Checklist หน้าจอ (คลิกปุ๊บ บันทึกปั๊บ)
+        window.toggleChecklistItem = async function(id, checkIndex, isDone) {
+            const item = allItems.find(i => i.id === id);
+            if(item && item.checklists) {
+                item.checklists[checkIndex].isDone = isDone;
+                await updateDoc(doc(db, "bucketlist", id), { checklists: item.checklists });
+                renderItems(); // รีโหลดหน้าจอไวๆ โดยใช้ข้อมูลใน Memory (ไม่ต้องโหลด DB ใหม่ให้เสียเวลา)
             }
         };
 
@@ -406,11 +489,12 @@
             document.getElementById('bucketForm').reset();
             document.getElementById('editId').value = ""; 
             document.getElementById('modalTitle').innerText = "✨ เพิ่มเป้าหมายใหม่";
+            document.getElementById('checklistContainer').innerHTML = ''; // เคลียร์ checklist
             
-            // รีเซ็ตปุ่ม Toggle ต่างๆ
             document.getElementById('itemTBD').dispatchEvent(new Event('change'));
             document.getElementById('itemTracking').checked = false;
             document.getElementById('itemTracking').dispatchEvent(new Event('change'));
+            document.getElementById('trackType').dispatchEvent(new Event('change'));
             
             toggleModal('mainModal');
         }
@@ -433,13 +517,27 @@
             document.getElementById('timeUnit').value = item.timeUnit;
             document.getElementById('itemTBD').dispatchEvent(new Event('change'));
 
-            // โหลดข้อมูล Tracking
+            // โหลด Tracking
             const isTracking = item.isTracking || false;
             document.getElementById('itemTracking').checked = isTracking;
+            document.getElementById('trackType').value = item.trackType || 'numeric';
             document.getElementById('trackTarget').value = item.trackTarget || "";
             document.getElementById('trackUnit').value = item.trackUnit || "";
             document.getElementById('trackCurrent').value = item.trackCurrent || 0;
+            
             document.getElementById('itemTracking').dispatchEvent(new Event('change'));
+            document.getElementById('trackType').dispatchEvent(new Event('change'));
+
+            // โหลด Checklist เข้าฟอร์ม
+            const chkContainer = document.getElementById('checklistContainer');
+            chkContainer.innerHTML = '';
+            if (item.trackType === 'checklist' && item.checklists) {
+                item.checklists.forEach(chk => {
+                    addChecklistItem(chk.text, chk.isDone);
+                });
+            } else if (isTracking && item.trackType === 'checklist') {
+                addChecklistItem(); // ใส่ว่างๆ 1 อันถ้าไม่มี
+            }
 
             toggleModal('mainModal');
         }
@@ -454,17 +552,25 @@
             const tNumber = Number(document.getElementById('timeNumber').value);
             const tUnit = document.getElementById('timeUnit').value;
             
-            // ข้อมูล Tracking
-            const isTracking = document.getElementById('itemTracking').checked;
-            const trackTarget = isTracking ? Number(document.getElementById('trackTarget').value) : 0;
-            const trackUnit = isTracking ? document.getElementById('trackUnit').value : "";
-            const trackCurrent = isTracking ? Number(document.getElementById('trackCurrent').value) : 0;
-            
             let calculatedDays = 0;
             if(!isTBD) {
                 if(tUnit === 'weeks') calculatedDays = tNumber * 7;
                 else if(tUnit === 'months') calculatedDays = tNumber * 30;
                 else if(tUnit === 'years') calculatedDays = tNumber * 365;
+            }
+
+            const isTracking = document.getElementById('itemTracking').checked;
+            const trackType = document.getElementById('trackType').value;
+            
+            // ดึงข้อมูล Checklist จาก DOM
+            const checklists = [];
+            if (isTracking && trackType === 'checklist') {
+                const listItems = document.querySelectorAll('#checklistContainer li');
+                listItems.forEach(li => {
+                    const txt = li.querySelector('.chk-text').value.trim();
+                    const isDone = li.querySelector('.chk-status').checked;
+                    if(txt) checklists.push({ text: txt, isDone: isDone });
+                });
             }
 
             const data = {
@@ -477,10 +583,13 @@
                 timeUnit: tUnit,
                 isTBD: isTBD,
                 calculatedDays: calculatedDays,
+                
                 isTracking: isTracking,
-                trackTarget: trackTarget,
-                trackUnit: trackUnit,
-                trackCurrent: trackCurrent
+                trackType: trackType,
+                trackTarget: isTracking && trackType === 'numeric' ? Number(document.getElementById('trackTarget').value) : 0,
+                trackUnit: isTracking && trackType === 'numeric' ? document.getElementById('trackUnit').value : "",
+                trackCurrent: isTracking && trackType === 'numeric' ? Number(document.getElementById('trackCurrent').value) : 0,
+                checklists: checklists
             };
 
             try {
