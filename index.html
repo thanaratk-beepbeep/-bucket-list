@@ -11,17 +11,17 @@
         .modal { transition: opacity 0.25s ease; }
         body.modal-active { overflow-x: hidden; overflow-y: hidden !important; }
         .completed-item { opacity: 0.6; filter: grayscale(100%); }
-        @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        .animate-pop { animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes popIn { 0% { transform: scale(0.95); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .animate-pop { animation: popIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     </style>
 </head>
-<body class="text-gray-800 antialiased">
+<body class="text-gray-800 antialiased min-h-screen flex flex-col">
 
-    <!-- Header & Dashboard -->
-    <div class="max-w-4xl mx-auto p-4 md:p-6 mt-4 md:mt-8">
+    <!-- Header -->
+    <div class="max-w-5xl mx-auto w-full p-4 md:p-6 mt-2">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
             <div>
-                <h1 class="text-3xl font-bold text-indigo-600">🎯 All-in-One Tracker</h1>
+                <h1 class="text-3xl font-bold text-indigo-600 tracking-tight">🎯 All-in-One Tracker</h1>
                 <p class="text-gray-500 mt-1">เป้าหมายใหญ่ และ งานรายวันของคุณ</p>
             </div>
             <button onclick="openAddModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition transform hover:scale-105 w-full md:w-auto">
@@ -29,83 +29,127 @@
             </button>
         </div>
 
-        <!-- 📊 Statistics Section -->
-        <div class="grid grid-cols-3 gap-4 mb-8">
-            <div class="bg-white rounded-xl shadow-sm p-4 text-center border-b-4 border-indigo-400">
-                <p class="text-xs md:text-sm text-gray-500 font-semibold">เป้าหมายทั้งหมด</p>
-                <p class="text-2xl md:text-3xl font-bold text-gray-800" id="statTotal">0</p>
-            </div>
-            <div class="bg-white rounded-xl shadow-sm p-4 text-center border-b-4 border-green-400">
-                <p class="text-xs md:text-sm text-gray-500 font-semibold">งบที่ต้องใช้ (฿)</p>
-                <p class="text-xl md:text-2xl font-bold text-green-600" id="statBudget">0</p>
-            </div>
-            <div class="bg-white rounded-xl shadow-sm p-4 text-center border-b-4 border-yellow-400">
-                <p class="text-xs md:text-sm text-gray-500 font-semibold">สำเร็จแล้ว</p>
-                <p class="text-2xl md:text-3xl font-bold text-yellow-600" id="statCompleted">0</p>
-            </div>
-        </div>
-
-        <!-- 🔍 Filters Section -->
-        <div class="bg-white p-4 rounded-xl shadow-sm mb-6">
-            <div class="flex flex-col md:flex-row gap-4">
-                <div class="flex-1">
-                    <label class="block text-xs font-medium text-gray-500 mb-1">สถานะ</label>
-                    <select id="filterStatus" onchange="renderItems()" class="w-full rounded-md border-gray-300 shadow-sm border p-2 text-sm focus:border-indigo-500">
-                        <option value="all">แสดงทั้งหมด</option>
-                        <option value="pending" selected>⏳ รอทำ (ยังไม่สำเร็จ)</option>
-                        <option value="completed">✅ สำเร็จแล้ว</option>
-                    </select>
-                </div>
-                <div class="flex-1">
-                    <label class="block text-xs font-medium text-gray-500 mb-1">ช่วงเวลาที่เหลือ</label>
-                    <select id="filterTimeframe" onchange="renderItems()" class="w-full rounded-md border-gray-300 shadow-sm border p-2 text-sm focus:border-indigo-500">
-                        <option value="all">ทุกช่วงเวลา</option>
-                        <option value="urgent">⏰ โค้งสุดท้าย / เลยกำหนด (< 14 วัน)</option>
-                        <option value="short">ระยะสั้น (เหลือ < 3 เดือน)</option>
-                        <option value="medium">ระยะกลาง (เหลือ < 1 ปี)</option>
-                        <option value="long">ระยะยาว (เหลือ > 1 ปี)</option>
-                        <option value="tbd">รอเหตุการณ์ (TBD)</option>
-                    </select>
-                </div>
-            </div>
+        <!-- 🌟 แถบเมนูนำทางหลัก (Navigation) -->
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6 bg-white p-3 rounded-2xl shadow-sm border border-gray-100">
             
-            <div class="mt-4 pt-4 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4">
-                <!-- ปุ่มสลับหมวดหมู่ -->
-                <div class="flex bg-gray-100 p-1 rounded-lg w-full md:w-auto">
-                    <button onclick="setTypeFilter('all')" id="btnFilter-all" class="flex-1 px-4 py-2 text-sm font-bold rounded-md bg-white shadow-sm text-indigo-600 transition">ทั้งหมด</button>
-                    <button onclick="setTypeFilter('bucket')" id="btnFilter-bucket" class="flex-1 px-4 py-2 text-sm font-medium rounded-md text-gray-500 hover:text-gray-700 transition whitespace-nowrap">🌟 Bucket List</button>
-                    <button onclick="setTypeFilter('todo')" id="btnFilter-todo" class="flex-1 px-4 py-2 text-sm font-medium rounded-md text-gray-500 hover:text-gray-700 transition whitespace-nowrap">✅ To-Do List</button>
-                </div>
-                <!-- 🪄 ปุ่ม Quick Win -->
-                <button onclick="suggestQuickWin()" class="w-full md:w-auto bg-gradient-to-r from-pink-500 to-orange-400 hover:from-pink-600 hover:to-orange-500 text-white font-bold py-2 px-6 rounded-full shadow-md transition transform hover:scale-105 flex items-center justify-center gap-2">
-                    <span class="text-xl">🪄</span> ต้องการ Heal ใจ
+            <!-- ปุ่มใหญ่ 2 ปุ่ม (Summary & Quick Win) -->
+            <div class="flex w-full md:w-auto gap-2">
+                <button onclick="switchView('summary')" class="flex-1 md:flex-none bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-600 hover:to-teal-500 text-white font-bold py-2 px-6 rounded-full shadow-md transition transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                    📊 หน้าสรุป
+                </button>
+                <button onclick="suggestQuickWin()" class="flex-1 md:flex-none bg-gradient-to-r from-pink-500 to-orange-400 hover:from-pink-600 hover:to-orange-500 text-white font-bold py-2 px-6 rounded-full shadow-md transition transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                    <span class="text-lg">🪄</span> Heal ใจ
                 </button>
             </div>
+            
+            <!-- Tab เลือกดูรายการย่อย -->
+            <div class="flex bg-gray-100 p-1.5 rounded-full w-full md:w-auto overflow-hidden">
+                <button onclick="switchView('list', 'all')" id="nav-all" class="flex-1 px-5 py-2 text-sm font-medium rounded-full text-gray-500 hover:text-gray-800 transition">📝 รายการทั้งหมด</button>
+                <button onclick="switchView('list', 'bucket')" id="nav-bucket" class="flex-1 px-5 py-2 text-sm font-medium rounded-full text-gray-500 hover:text-gray-800 transition">🌟 Bucket</button>
+                <button onclick="switchView('list', 'todo')" id="nav-todo" class="flex-1 px-5 py-2 text-sm font-medium rounded-full text-gray-500 hover:text-gray-800 transition">✅ To-Do</button>
+            </div>
         </div>
 
-        <div id="bucketListContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="col-span-full text-center py-10 text-gray-400" id="loadingText">กำลังโหลดข้อมูล...</div>
-        </div>
-    </div>
+        <!-- ========================================== -->
+        <!-- 📊 VIEW 1: SUMMARY DASHBOARD (หน้าแรก) -->
+        <!-- ========================================== -->
+        <div id="summaryView" class="grid grid-cols-1 md:grid-cols-2 gap-5 animate-pop pb-10">
+            
+            <!-- Card 1: ภารกิจวันนี้ -->
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1.5 bg-green-400"></div>
+                <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">☀️ ภารกิจวันนี้</h3>
+                <div id="sumTodayTasks" class="space-y-3">
+                    <!-- โหลดภารกิจวันนี้ -->
+                </div>
+            </div>
 
-    <!-- 🌟 Modal สำหรับ Quick Win Suggestion -->
+            <!-- Card 2: To-Do Matrix -->
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1.5 bg-yellow-400"></div>
+                <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">📦 To-Do Matrix (รอทำ)</h3>
+                <div class="grid grid-cols-2 gap-3 h-[calc(100%-2rem)]">
+                    <div class="bg-red-50 p-4 rounded-2xl border border-red-100 flex flex-col justify-center items-center">
+                        <p class="text-[11px] font-bold text-red-600 uppercase tracking-wider text-center">สำคัญ + ด่วน</p>
+                        <p class="text-4xl font-black text-red-500 mt-1" id="sumM4">0</p>
+                    </div>
+                    <div class="bg-orange-50 p-4 rounded-2xl border border-orange-100 flex flex-col justify-center items-center">
+                        <p class="text-[11px] font-bold text-orange-600 uppercase tracking-wider text-center">สำคัญ</p>
+                        <p class="text-4xl font-black text-orange-500 mt-1" id="sumM3">0</p>
+                    </div>
+                    <div class="bg-yellow-50 p-4 rounded-2xl border border-yellow-100 flex flex-col justify-center items-center">
+                        <p class="text-[11px] font-bold text-yellow-600 uppercase tracking-wider text-center">ด่วน</p>
+                        <p class="text-4xl font-black text-yellow-500 mt-1" id="sumM2">0</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-2xl border border-gray-200 flex flex-col justify-center items-center">
+                        <p class="text-[11px] font-bold text-gray-500 uppercase tracking-wider text-center">ไม่สำคัญ/ด่วน</p>
+                        <p class="text-4xl font-black text-gray-400 mt-1" id="sumM1">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Bucket List โค้งสุดท้าย -->
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1.5 bg-indigo-400"></div>
+                <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">🎯 Bucket โค้งสุดท้าย</h3>
+                <div id="sumUrgentBuckets" class="space-y-3">
+                    <!-- โหลด Bucket เร่งด่วน -->
+                </div>
+            </div>
+
+            <!-- Card 4: สุขภาพการเงิน -->
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden flex flex-col justify-center">
+                <div class="absolute top-0 left-0 w-full h-1.5 bg-blue-400"></div>
+                <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">💰 การใช้จ่ายเพื่อเป้าหมาย</h3>
+                <div class="flex justify-between items-end mb-3">
+                    <span class="text-sm font-bold text-gray-500" id="sumBudgetTxt">฿0 / ฿0</span>
+                    <span class="text-3xl font-black text-blue-500 leading-none" id="sumBudgetPercent">0%</span>
+                </div>
+                <div class="w-full bg-gray-100 rounded-full h-5 shadow-inner p-1">
+                    <div id="sumBudgetBar" class="bg-gradient-to-r from-blue-400 to-indigo-500 h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
+                </div>
+                <p class="text-xs text-gray-400 mt-4 text-center">* เปรียบเทียบจากเป้าหมายที่ทำสำเร็จแล้ว เทียบกับงบประมาณที่ตั้งไว้ทั้งหมด</p>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 📝 VIEW 2: LIST VIEW (ดูรายการทั้งหมด/ย่อย) -->
+        <!-- ========================================== -->
+        <div id="listView" class="hidden animate-pop pb-10">
+            <!-- Filter Status -->
+            <div class="flex justify-end mb-4">
+                <select id="filterStatus" onchange="renderItems()" class="w-full md:w-48 rounded-xl border-gray-300 shadow-sm border p-2 text-sm focus:border-indigo-500 bg-white">
+                    <option value="all">แสดงสถานะทั้งหมด</option>
+                    <option value="pending" selected>⏳ รอทำ (ยังไม่สำเร็จ)</option>
+                    <option value="completed">✅ สำเร็จแล้ว</option>
+                </select>
+            </div>
+
+            <div id="bucketListContainer" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div class="col-span-full text-center py-10 text-gray-400" id="loadingText">กำลังโหลดข้อมูล...</div>
+            </div>
+        </div>
+
+    </div> <!-- End Main Container -->
+
+    <!-- 🌟 Modal สำหรับ Quick Win -->
     <div class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-[60] px-4" id="quickWinModal">
         <div class="modal-overlay absolute w-full h-full bg-black opacity-60 backdrop-blur-sm" onclick="toggleModal('quickWinModal')"></div>
-        <div class="modal-container bg-white w-full max-w-sm mx-auto rounded-2xl shadow-2xl z-[60] animate-pop">
-            <div class="p-6 text-center">
-                <div class="text-5xl mb-4">🎁</div>
+        <div class="modal-container bg-white w-full max-w-sm mx-auto rounded-3xl shadow-2xl z-[60] animate-pop">
+            <div class="p-8 text-center">
+                <div class="text-6xl mb-4 animate-bounce">🎁</div>
                 <h3 class="text-2xl font-bold text-gray-800 mb-2">ทำสิ่งนี้ดูสิ!</h3>
-                <p class="text-sm text-gray-500 mb-6">เป้าหมายเล็กๆ ที่ทำได้ง่ายและใช้เงินน้อย เพื่อเติมไฟให้คุณวันนี้</p>
-                <div class="bg-gradient-to-br from-pink-50 to-orange-50 p-5 rounded-xl border border-pink-100 mb-6">
-                    <h4 id="qwName" class="text-xl font-bold text-pink-600 mb-2 leading-tight">ชื่อเป้าหมาย</h4>
-                    <div class="flex justify-center gap-4 text-sm font-medium text-gray-600">
+                <p class="text-sm text-gray-500 mb-6">เป้าหมายเล็กๆ ที่ทำได้ง่ายและใช้เงินน้อย</p>
+                <div class="bg-gradient-to-br from-pink-50 to-orange-50 p-6 rounded-2xl border border-pink-100 mb-6 shadow-inner">
+                    <h4 id="qwName" class="text-xl font-bold text-pink-600 mb-3 leading-tight">ชื่อเป้าหมาย</h4>
+                    <div class="flex justify-center gap-4 text-sm font-bold text-gray-600">
                         <span id="qwPrice">💰 ฿0</span><span>🟢 ทำได้ง่าย</span>
                     </div>
                 </div>
                 <div class="flex flex-col gap-3">
-                    <button onclick="doQuickWinNow()" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-4 rounded-xl shadow transition w-full">✅ ฉันจะทำสิ่งนี้แหละ!</button>
-                    <button onclick="suggestQuickWin()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-xl transition w-full">🎲 ขออันอื่น</button>
-                    <button onclick="toggleModal('quickWinModal')" class="text-gray-400 hover:text-gray-600 text-sm mt-2">ปิดหน้าต่างนี้</button>
+                    <button onclick="doQuickWinNow()" class="bg-gradient-to-r from-pink-500 to-orange-400 hover:from-pink-600 hover:to-orange-500 text-white font-bold py-3 px-4 rounded-xl shadow-md transition transform hover:-translate-y-0.5 w-full">✅ ฉันจะทำสิ่งนี้แหละ!</button>
+                    <button onclick="suggestQuickWin()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 px-4 rounded-xl transition w-full">🎲 ขออันอื่น</button>
+                    <button onclick="toggleModal('quickWinModal')" class="text-gray-400 hover:text-gray-600 text-sm mt-3 font-medium">ปิดหน้าต่างนี้</button>
                 </div>
                 <input type="hidden" id="qwCurrentId" value="">
             </div>
@@ -113,61 +157,59 @@
     </div>
 
     <!-- 🛠 Modal สำหรับเพิ่ม/แก้ไขข้อมูล -->
-    <div class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50 px-4" id="mainModal">
-        <div class="modal-overlay absolute w-full h-full bg-black opacity-50" onclick="toggleModal('mainModal')"></div>
-        <div class="modal-container bg-white w-full max-w-md mx-auto rounded-xl shadow-2xl z-50 overflow-y-auto max-h-[90vh]">
-            <div class="modal-content py-4 px-6 text-left">
-                <div class="flex justify-between items-center pb-3 border-b">
+    <div class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50 px-4 py-6" id="mainModal">
+        <div class="modal-overlay absolute w-full h-full bg-black opacity-50 backdrop-blur-sm" onclick="toggleModal('mainModal')"></div>
+        <div class="modal-container bg-white w-full max-w-md mx-auto rounded-3xl shadow-2xl z-50 overflow-y-auto max-h-full">
+            <div class="modal-content py-5 px-6 text-left">
+                <div class="flex justify-between items-center pb-4 border-b border-gray-100">
                     <p class="text-xl font-bold text-gray-800" id="modalTitle">✨ เพิ่มรายการใหม่</p>
-                    <div class="modal-close cursor-pointer z-50" onclick="toggleModal('mainModal')">
-                        <span class="text-2xl text-gray-400 hover:text-red-500">&times;</span>
+                    <div class="cursor-pointer z-50 p-2 bg-gray-100 rounded-full hover:bg-red-100 hover:text-red-500 transition" onclick="toggleModal('mainModal')">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </div>
                 </div>
                 
-                <form id="bucketForm" class="space-y-3 mt-4">
+                <form id="bucketForm" class="space-y-4 mt-5">
                     <input type="hidden" id="editId" value="">
 
                     <!-- ตัวเลือกประเภท Bucket / To-Do -->
-                    <div class="bg-indigo-50 p-2 rounded-lg border border-indigo-100 flex gap-2">
+                    <div class="bg-indigo-50 p-1.5 rounded-xl border border-indigo-100 flex gap-1">
                         <label class="flex-1 text-center cursor-pointer">
                             <input type="radio" name="itemType" value="bucket" class="peer hidden" checked>
-                            <div class="peer-checked:bg-indigo-600 peer-checked:text-white bg-white text-gray-600 py-2 rounded-md font-medium text-sm transition shadow-sm">
+                            <div class="peer-checked:bg-indigo-600 peer-checked:text-white bg-transparent text-gray-600 py-2 rounded-lg font-bold text-sm transition">
                                 🌟 Bucket List
                             </div>
                         </label>
                         <label class="flex-1 text-center cursor-pointer">
                             <input type="radio" name="itemType" value="todo" class="peer hidden">
-                            <div class="peer-checked:bg-indigo-600 peer-checked:text-white bg-white text-gray-600 py-2 rounded-md font-medium text-sm transition shadow-sm">
+                            <div class="peer-checked:bg-indigo-600 peer-checked:text-white bg-transparent text-gray-600 py-2 rounded-lg font-bold text-sm transition">
                                 ✅ To-Do List
                             </div>
                         </label>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">1. ชื่อรายการ</label>
-                        <input type="text" id="itemName" required class="mt-1 block w-full rounded-md border p-2 text-sm">
+                        <label class="block text-sm font-bold text-gray-700 mb-1">1. ชื่อรายการ / งานที่ต้องทำ</label>
+                        <input type="text" id="itemName" required class="block w-full rounded-xl border-gray-300 border p-3 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition" placeholder="ระบุสิ่งที่ต้องการทำ">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">2. งบประมาณที่ใช้ (บาท)</label>
-                        <input type="number" id="itemPrice" required min="0" class="mt-1 block w-full rounded-md border p-2 text-sm" placeholder="0 = ฟรี">
+                        <label class="block text-sm font-bold text-gray-700 mb-1">2. งบประมาณที่ใช้ (บาท)</label>
+                        <input type="number" id="itemPrice" required min="0" class="block w-full rounded-xl border-gray-300 border p-3 text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition" placeholder="0 = ฟรี">
                     </div>
                     
-                    <!-- 🌟 🌟 🌟 แบ่งโซนการให้คะแนนตามประเภท 🌟 🌟 🌟 -->
-                    
-                    <!-- โซนสำหรับ Bucket List (Necessity, Impact, Possibility) -->
-                    <div id="bucketPriorityContainer" class="space-y-3">
-                        <div class="flex gap-2">
+                    <!-- 🌟 โซน Bucket List (Necessity, Impact, Possibility) -->
+                    <div id="bucketPriorityContainer" class="space-y-4">
+                        <div class="flex gap-3">
                             <div class="w-1/2">
-                                <label class="block text-sm font-medium text-gray-700">3. ความจำเป็น</label>
-                                <select id="itemNecessity" class="mt-1 block w-full rounded-md border p-2 text-sm bg-white">
+                                <label class="block text-sm font-bold text-gray-700 mb-1">3. ความจำเป็น</label>
+                                <select id="itemNecessity" class="block w-full rounded-xl border border-gray-300 p-3 text-sm bg-gray-50 focus:bg-white outline-none transition">
                                     <option value="3">🔥 ต้องทำให้ได้</option>
                                     <option value="2">⭐ ควรทำ</option>
                                     <option value="1">☁️ แค่ความอยาก</option>
                                 </select>
                             </div>
                             <div class="w-1/2">
-                                <label class="block text-sm font-medium text-gray-700">4. ผลกระทบ</label>
-                                <select id="itemImpact" class="mt-1 block w-full rounded-md border p-2 text-sm bg-white">
+                                <label class="block text-sm font-bold text-gray-700 mb-1">4. ผลกระทบ</label>
+                                <select id="itemImpact" class="block w-full rounded-xl border border-gray-300 p-3 text-sm bg-gray-50 focus:bg-white outline-none transition">
                                     <option value="3">😭 กระทบหนัก</option>
                                     <option value="2">🥲 ปานกลาง</option>
                                     <option value="1">😌 ไม่เป็นไร</option>
@@ -175,19 +217,19 @@
                             </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">5. ความเป็นไปได้ / ความยาก</label>
-                            <select id="itemPossibility" class="mt-1 block w-full rounded-md border p-2 text-sm bg-white">
+                            <label class="block text-sm font-bold text-gray-700 mb-1">5. ความเป็นไปได้ / ความยาก</label>
+                            <select id="itemPossibility" class="block w-full rounded-xl border border-gray-300 p-3 text-sm bg-gray-50 focus:bg-white outline-none transition">
                                 <option value="3">🟢 เป็นไปได้สูง / ง่ายมาก</option>
                                 <option value="2">🟡 ปานกลาง / ต้องพยายาม</option>
                                 <option value="1">🔴 ยากมาก / โอกาสน้อย</option>
                             </select>
                         </div>
-                        <!-- เวลาของ Bucket List -->
-                        <div class="bg-gray-50 p-3 rounded-lg border">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">6. ระยะเวลาที่คาดหวัง</label>
+                        
+                        <div class="bg-gray-50 p-4 rounded-2xl border border-gray-200">
+                            <label class="block text-sm font-bold text-gray-700 mb-2">6. ระยะเวลาที่คาดหวัง</label>
                             <div class="flex space-x-2">
-                                <input type="number" id="timeNumber" min="1" value="1" class="w-1/2 rounded-md border p-2 text-sm focus:border-indigo-500">
-                                <select id="timeUnit" class="w-1/2 rounded-md border p-2 text-sm focus:border-indigo-500 bg-white">
+                                <input type="number" id="timeNumber" min="1" value="1" class="w-1/2 rounded-xl border p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+                                <select id="timeUnit" class="w-1/2 rounded-xl border p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
                                     <option value="weeks">สัปดาห์</option>
                                     <option value="months">เดือน</option>
                                     <option value="years">ปี</option>
@@ -200,31 +242,29 @@
                         </div>
                     </div>
 
-                    <!-- โซนสำหรับ To-Do List (Eisenhower Matrix) -->
-                    <div id="todoPriorityContainer" class="hidden space-y-3">
-                        <div class="bg-yellow-50 p-3 rounded-lg border border-yellow-100">
-                            <label class="block text-sm font-medium text-gray-800 font-bold mb-1">3. ระดับความสำคัญ (Eisenhower Matrix)</label>
-                            <select id="todoMatrix" class="mt-1 block w-full rounded-md border border-yellow-300 p-2 text-sm bg-white shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-200">
+                    <!-- ✅ โซน To-Do List (Eisenhower Matrix) -->
+                    <div id="todoPriorityContainer" class="hidden space-y-4">
+                        <div class="bg-yellow-50 p-4 rounded-2xl border border-yellow-200 shadow-sm">
+                            <label class="block text-sm font-black text-gray-800 mb-2">3. ระดับความสำคัญ (Eisenhower Matrix)</label>
+                            <select id="todoMatrix" class="block w-full rounded-xl border border-yellow-300 p-3 text-sm bg-white shadow-inner focus:ring-2 focus:ring-yellow-400 outline-none">
                                 <option value="4">🔥 สำคัญ + เร่งด่วน (ทำทันที)</option>
                                 <option value="3">⭐ สำคัญ + ไม่เร่งด่วน (จัดเวลาทำ)</option>
-                                <option value="2">⚡ ไม่สำคัญ + เร่งด่วน (รีบเคลียร์ / ให้คนอื่นทำ)</option>
+                                <option value="2">⚡ ไม่สำคัญ + เร่งด่วน (รีบเคลียร์ / คนอื่นทำ)</option>
                                 <option value="1">☁️ ไม่สำคัญ + ไม่เร่งด่วน (ทำทีหลัง / ตัดทิ้ง)</option>
                             </select>
                         </div>
                         
-                        <!-- เวลาของ To-Do List -->
-                        <div class="bg-green-50 p-3 rounded-lg border border-green-100">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">4. กำหนดเวลาที่แน่นอน</label>
-                            <input type="date" id="todoDate" class="mt-1 block w-full rounded-md border p-2 text-sm focus:border-green-500 mb-3 bg-white">
+                        <div class="bg-green-50 p-4 rounded-2xl border border-green-200 shadow-sm">
+                            <label class="block text-sm font-bold text-gray-800 mb-2">4. วันและเวลาที่ต้องทำ</label>
+                            <input type="date" id="todoDate" class="block w-full rounded-xl border border-green-300 p-3 text-sm focus:ring-2 focus:ring-green-400 outline-none mb-3 bg-white">
                             
-                            <div class="flex items-center gap-3">
-                                <!-- เวลาเริ่ม -->
+                            <div class="flex items-center gap-3 bg-white p-2 rounded-xl border border-green-100">
                                 <div class="w-1/2">
-                                    <label class="block text-[11px] text-gray-500 font-bold mb-1">เวลาเริ่ม</label>
+                                    <label class="block text-[10px] text-green-700 font-bold mb-1 uppercase tracking-wider pl-1">เวลาเริ่ม</label>
                                     <div class="flex gap-1">
-                                        <select id="todoStartHour" class="w-full rounded-md border p-2 text-sm focus:border-green-500 bg-white"></select>
-                                        <span class="py-2 text-gray-500 font-bold">:</span>
-                                        <select id="todoStartMinute" class="w-full rounded-md border p-2 text-sm focus:border-green-500 bg-white">
+                                        <select id="todoStartHour" class="w-full rounded-lg border-gray-200 p-2 text-sm bg-gray-50 focus:bg-white"></select>
+                                        <span class="py-2 text-gray-400 font-bold">:</span>
+                                        <select id="todoStartMinute" class="w-full rounded-lg border-gray-200 p-2 text-sm bg-gray-50 focus:bg-white">
                                             <option value="00">00</option>
                                             <option value="15">15</option>
                                             <option value="30">30</option>
@@ -232,13 +272,12 @@
                                         </select>
                                     </div>
                                 </div>
-                                <!-- เวลาเสร็จ -->
                                 <div class="w-1/2">
-                                    <label class="block text-[11px] text-gray-500 font-bold mb-1">เวลาเสร็จ</label>
+                                    <label class="block text-[10px] text-green-700 font-bold mb-1 uppercase tracking-wider pl-1">เวลาเสร็จ</label>
                                     <div class="flex gap-1">
-                                        <select id="todoEndHour" class="w-full rounded-md border p-2 text-sm focus:border-green-500 bg-white"></select>
-                                        <span class="py-2 text-gray-500 font-bold">:</span>
-                                        <select id="todoEndMinute" class="w-full rounded-md border p-2 text-sm focus:border-green-500 bg-white">
+                                        <select id="todoEndHour" class="w-full rounded-lg border-gray-200 p-2 text-sm bg-gray-50 focus:bg-white"></select>
+                                        <span class="py-2 text-gray-400 font-bold">:</span>
+                                        <select id="todoEndMinute" class="w-full rounded-lg border-gray-200 p-2 text-sm bg-gray-50 focus:bg-white">
                                             <option value="00">00</option>
                                             <option value="15">15</option>
                                             <option value="30">30</option>
@@ -246,53 +285,64 @@
                                         </select>
                                     </div>
                                 </div>
+                            </div>
+                            
+                            <!-- 🔄 ระบบทำซ้ำสำหรับ To-Do List -->
+                            <div class="mt-4 pt-3 border-t border-green-200/50">
+                                <label class="block text-[11px] text-green-700 font-bold mb-1 uppercase tracking-wider pl-1">🔄 การทำซ้ำ (Repeat)</label>
+                                <select id="todoRepeat" class="block w-full rounded-xl border-gray-300 p-3 text-sm bg-white outline-none focus:ring-2 focus:ring-green-400">
+                                    <option value="none">ไม่ทำซ้ำ (ทำครั้งเดียว)</option>
+                                    <option value="daily">ทำทุกวัน</option>
+                                    <option value="weekly">ทำทุกสัปดาห์</option>
+                                    <option value="monthly">ทำทุกเดือน</option>
+                                </select>
                             </div>
                         </div>
                     </div>
 
-                    <!-- 📈 ระบบ Tracking (ใช้งานได้ทั้ง Bucket และ Todo) -->
-                    <div class="bg-blue-50 p-3 rounded-lg border border-blue-100">
-                        <label class="flex items-center space-x-2 text-sm text-blue-800 font-semibold cursor-pointer mb-2">
-                            <input type="checkbox" id="itemTracking" class="rounded text-blue-600 focus:ring-blue-500 w-4 h-4">
+                    <!-- 📈 ระบบ Tracking -->
+                    <div class="bg-blue-50 p-4 rounded-2xl border border-blue-200 shadow-sm transition-all duration-300">
+                        <label class="flex items-center space-x-2 text-sm text-blue-800 font-bold cursor-pointer">
+                            <input type="checkbox" id="itemTracking" class="rounded text-blue-600 focus:ring-blue-500 w-5 h-5">
                             <span>📈 เปิดระบบติดตามความคืบหน้า</span>
                         </label>
                         
-                        <div id="trackingFields" class="hidden space-y-3 border-t border-blue-200 pt-2">
+                        <div id="trackingFields" class="hidden space-y-4 border-t border-blue-200/60 pt-4 mt-3">
                             <div>
-                                <label class="block text-[11px] text-gray-600 uppercase font-bold">รูปแบบการติดตาม</label>
-                                <select id="trackType" class="mt-1 block w-full rounded-md border p-2 text-sm bg-white">
-                                    <option value="numeric">📊 แบบตัวเลข (เช่น เก็บเงิน, หน่วยกิต)</option>
-                                    <option value="checklist">✅ แบบขั้นตอนย่อย (เช่น ระดับชั้น, แพลนทริป)</option>
+                                <label class="block text-[10px] text-blue-700 uppercase font-bold mb-1 pl-1">รูปแบบการติดตาม</label>
+                                <select id="trackType" class="block w-full rounded-xl border border-blue-200 p-3 text-sm bg-white outline-none focus:ring-2 focus:ring-blue-400">
+                                    <option value="numeric">📊 แบบตัวเลข (เช่น เก็บเงิน, จำนวนหน้า)</option>
+                                    <option value="checklist">✅ แบบขั้นตอนย่อย (เป็นด่านๆ)</option>
                                 </select>
                             </div>
 
-                            <div id="trackNumericFields" class="space-y-2">
-                                <div class="flex gap-2">
+                            <div id="trackNumericFields" class="space-y-3">
+                                <div class="flex gap-3">
                                     <div class="w-1/2">
-                                        <label class="block text-[11px] text-gray-600 uppercase font-bold">เป้าหมายตัวเลข</label>
-                                        <input type="number" id="trackTarget" min="1" class="mt-1 block w-full rounded-md border p-2 text-sm" placeholder="100000">
+                                        <label class="block text-[10px] text-gray-500 uppercase font-bold mb-1 pl-1">เป้าหมายสูงสุด</label>
+                                        <input type="number" id="trackTarget" min="1" class="block w-full rounded-xl border p-3 text-sm outline-none focus:ring-2 focus:ring-blue-400" placeholder="100000">
                                     </div>
                                     <div class="w-1/2">
-                                        <label class="block text-[11px] text-gray-600 uppercase font-bold">หน่วยเรียก</label>
-                                        <input type="text" id="trackUnit" class="mt-1 block w-full rounded-md border p-2 text-sm" placeholder="บาท, หน้า">
+                                        <label class="block text-[10px] text-gray-500 uppercase font-bold mb-1 pl-1">หน่วยเรียก</label>
+                                        <input type="text" id="trackUnit" class="block w-full rounded-xl border p-3 text-sm outline-none focus:ring-2 focus:ring-blue-400" placeholder="บาท, หน้า">
                                     </div>
                                 </div>
                                 <div>
-                                    <label class="block text-[11px] text-gray-600 uppercase font-bold">ปัจจุบันทำได้</label>
-                                    <input type="number" id="trackCurrent" min="0" class="mt-1 block w-full rounded-md border p-2 text-sm" value="0">
+                                    <label class="block text-[10px] text-gray-500 uppercase font-bold mb-1 pl-1">ปัจจุบันทำได้ (เริ่มต้น)</label>
+                                    <input type="number" id="trackCurrent" min="0" class="block w-full rounded-xl border p-3 text-sm outline-none focus:ring-2 focus:ring-blue-400 bg-white" value="0">
                                 </div>
                             </div>
 
                             <div id="trackChecklistFields" class="hidden space-y-2">
-                                <label class="block text-[11px] text-gray-600 uppercase font-bold">รายการขั้นตอน</label>
+                                <label class="block text-[10px] text-gray-500 uppercase font-bold mb-1 pl-1">รายการขั้นตอน</label>
                                 <ul id="checklistContainer" class="space-y-2"></ul>
-                                <button type="button" onclick="addChecklistItem()" class="text-xs text-blue-600 hover:text-blue-800 font-bold bg-white border border-blue-200 rounded px-3 py-1 mt-1 w-full text-center">+ เพิ่มขั้นตอน</button>
+                                <button type="button" onclick="addChecklistItem()" class="text-xs text-blue-700 hover:text-blue-900 font-bold bg-white border border-blue-200 rounded-xl px-4 py-2 mt-2 w-full text-center transition hover:bg-blue-50">+ เพิ่มขั้นตอนย่อย</button>
                             </div>
                         </div>
                     </div>
 
-                    <div class="pt-3">
-                        <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-2 rounded-lg hover:bg-indigo-700" id="submitBtn">
+                    <div class="pt-4">
+                        <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-4 rounded-2xl hover:bg-indigo-700 shadow-lg transition transform hover:-translate-y-0.5 text-lg" id="submitBtn">
                             บันทึกข้อมูล
                         </button>
                     </div>
@@ -301,7 +351,7 @@
         </div>
     </div>
 
-    <!-- โหลด Firebase -->
+    <!-- โหลด Firebase & Script -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -331,6 +381,12 @@
             "2": "⚡ ไม่สำคัญ + เร่งด่วน",
             "1": "☁️ ไม่สำคัญ + ไม่เร่งด่วน"
         };
+        const matrixColors = {
+            "4": "text-red-500",
+            "3": "text-orange-500",
+            "2": "text-yellow-500",
+            "1": "text-gray-400"
+        };
 
         // ------------------ Initialize Time Dropdowns ------------------
         let hourOptions = '';
@@ -343,33 +399,37 @@
         document.getElementById('todoStartHour').value = '08';
         document.getElementById('todoEndHour').value = '09';
 
-        // ------------------ Button Type Filter Logic ------------------
-        window.setTypeFilter = function(type) {
-            currentTypeFilter = type;
-            const types = ['all', 'bucket', 'todo'];
-            types.forEach(t => {
-                const btn = document.getElementById(`btnFilter-${t}`);
-                if (t === type) {
-                    btn.className = "flex-1 px-4 py-2 text-sm font-bold rounded-md bg-white shadow-sm text-indigo-600 transition whitespace-nowrap";
-                } else {
-                    btn.className = "flex-1 px-4 py-2 text-sm font-medium rounded-md text-gray-500 hover:text-gray-700 transition whitespace-nowrap";
-                }
+        // ------------------ Views & Navigation Logic ------------------
+        window.switchView = function(view, filterType = 'all') {
+            // Reset Tab styling
+            ['nav-all', 'nav-bucket', 'nav-todo'].forEach(id => {
+                document.getElementById(id).className = "flex-1 px-5 py-2 text-sm font-medium rounded-full text-gray-500 hover:text-gray-800 transition";
             });
-            renderItems();
+
+            if (view === 'summary') {
+                document.getElementById('summaryView').classList.remove('hidden');
+                document.getElementById('listView').classList.add('hidden');
+                renderSummary();
+            } else {
+                document.getElementById('summaryView').classList.add('hidden');
+                document.getElementById('listView').classList.remove('hidden');
+                // Highlight active tab
+                document.getElementById(`nav-${filterType}`).className = "flex-1 px-5 py-2 text-sm font-bold rounded-full bg-white shadow-sm text-indigo-600 transition";
+                currentTypeFilter = filterType;
+                renderItems();
+            }
         };
 
         // ------------------ Quick Win Feature ------------------
         window.suggestQuickWin = function() {
-            // เลือกอันที่เป็น Bucket ทำง่าย หรือ Todo ที่เป็น Matrix 2 (ไม่สำคัญแต่ด่วน-ใช้แรงน้อย)
             const quickWins = allItems.filter(item => {
                 if(item.isCompleted || Number(item.price) > 1000) return false;
                 if(item.itemType === 'todo' && Number(item.todoMatrix) <= 2) return true; 
                 if((item.itemType === 'bucket' || !item.itemType) && Number(item.possibility) === 3) return true;
                 return false;
             });
-
             if (quickWins.length === 0) {
-                alert("ว้าก! ตอนนี้ไม่มีเป้าหมายที่ทำง่ายๆ ใช้งบน้อยๆ เลยครับ ลองเพิ่มเป้าหมายเล็กๆ ดูสิครับ");
+                alert("ไม่มีเป้าหมายแบบสายชิลล์เลยครับ ลองเพิ่มเป้าหมายเล็กๆ ไว้หน่อยสิครับ!");
                 return;
             }
             const luckyItem = quickWins[Math.floor(Math.random() * quickWins.length)];
@@ -383,9 +443,9 @@
             const id = document.getElementById('qwCurrentId').value;
             if(!id) return;
             try {
-                await updateDoc(doc(db, "bucketlist", id), { isCompleted: true });
+                await toggleStatus(id, false); // ส่งให้ฟังก์ชัน toggle จัดการ
                 toggleModal('quickWinModal');
-                setTimeout(() => { alert("เก่งมากครับ! 🎉 ขอให้มีความสุขกับรางวัลเล็กๆ ชิ้นนี้นะครับ"); loadItemsFromDB(); }, 300);
+                setTimeout(() => { alert("เก่งมากครับ! 🎉 เป็นก้าวเล็กๆ ที่ยอดเยี่ยม"); }, 300);
             } catch (error) { console.error(error); }
         };
 
@@ -393,11 +453,9 @@
         document.querySelectorAll('input[name="itemType"]').forEach(radio => {
             radio.addEventListener('change', function() {
                 if (this.value === 'todo') {
-                    // ปิด Bucket, เปิด To-do
                     document.getElementById('bucketPriorityContainer').classList.add('hidden');
                     document.getElementById('todoPriorityContainer').classList.remove('hidden');
                 } else {
-                    // เปิด Bucket, ปิด To-do
                     document.getElementById('bucketPriorityContainer').classList.remove('hidden');
                     document.getElementById('todoPriorityContainer').classList.add('hidden');
                 }
@@ -405,9 +463,8 @@
         });
 
         document.getElementById('itemTBD').addEventListener('change', function() {
-            const isChecked = this.checked;
-            document.getElementById('timeNumber').disabled = isChecked;
-            document.getElementById('timeUnit').disabled = isChecked;
+            document.getElementById('timeNumber').disabled = this.checked;
+            document.getElementById('timeUnit').disabled = this.checked;
         });
 
         document.getElementById('itemTracking').addEventListener('change', function() {
@@ -437,9 +494,9 @@
             const li = document.createElement('li');
             li.className = 'flex gap-2 items-center';
             li.innerHTML = `
-                <input type="checkbox" class="chk-status rounded text-blue-500 w-4 h-4 cursor-pointer" ${isDone ? 'checked' : ''}>
-                <input type="text" class="chk-text w-full text-sm border border-gray-300 rounded p-1.5 focus:border-blue-500" value="${text}" placeholder="เช่น ขั้นตอนย่อย...">
-                <button type="button" onclick="this.parentElement.remove()" class="text-gray-400 hover:text-red-500 font-bold text-lg">&times;</button>
+                <input type="checkbox" class="chk-status rounded text-blue-500 w-5 h-5 cursor-pointer" ${isDone ? 'checked' : ''}>
+                <input type="text" class="chk-text w-full text-sm border border-gray-300 rounded-lg p-2 focus:border-blue-500 outline-none" value="${text}" placeholder="ระบุขั้นตอน...">
+                <button type="button" onclick="this.parentElement.remove()" class="text-gray-400 hover:text-red-500 font-bold text-xl px-1">&times;</button>
             `;
             container.appendChild(li);
         };
@@ -448,7 +505,9 @@
         function calculateDaysLeft(createdAt, calculatedDays, isTBD, specificDate, itemType) {
             if (itemType === 'todo') {
                 if(!specificDate) return Infinity;
-                const diffTime = new Date(specificDate) - new Date();
+                const offset = new Date().getTimezoneOffset() * 60000;
+                const todayStr = new Date(Date.now() - offset).toISOString().split('T')[0];
+                const diffTime = new Date(specificDate) - new Date(todayStr);
                 return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
             } else {
                 if (isTBD) return Infinity;
@@ -466,12 +525,91 @@
                     data.daysLeft = calculateDaysLeft(data.createdAt, data.calculatedDays, data.isTBD, data.specificDate, data.itemType);
                     allItems.push({ id: docSnap.id, ...data });
                 });
-                renderItems();
+                
+                // Initialize View based on current state
+                if(!document.getElementById('summaryView').classList.contains('hidden')) {
+                    renderSummary();
+                } else {
+                    renderItems();
+                }
             } catch (error) {
-                document.getElementById('bucketListContainer').innerHTML = '<div class="col-span-full text-center text-red-500 py-10">เชื่อมต่อฐานข้อมูลล้มเหลว</div>';
+                console.error(error);
+                document.getElementById('summaryView').innerHTML = '<p class="text-center w-full py-10 text-red-500 col-span-2">เชื่อมต่อฐานข้อมูลล้มเหลว ตรวจสอบ Firebase Keys</p>';
             }
         }
 
+        // ==========================================
+        // 📊 Render Summary Page (NEW)
+        // ==========================================
+        window.renderSummary = function() {
+            if (allItems.length === 0) return;
+
+            const offset = new Date().getTimezoneOffset() * 60000;
+            const todayStr = new Date(Date.now() - offset).toISOString().split('T')[0];
+
+            // 1. ภารกิจวันนี้ (To-Do list วันนี้ที่ยังไม่เสร็จ)
+            const todaysTasks = allItems.filter(i => i.itemType === 'todo' && i.specificDate === todayStr && !i.isCompleted)
+                                        .sort((a, b) => b.todoMatrix - a.todoMatrix);
+            
+            let todayHtml = '';
+            if(todaysTasks.length === 0) {
+                todayHtml = '<div class="text-center py-6 bg-green-50 rounded-2xl border border-green-100"><p class="text-sm font-bold text-green-600">ไม่มีภารกิจค้างสำหรับวันนี้</p><p class="text-xs text-green-500 mt-1">พักผ่อนได้เต็มที่เลยครับ ☕</p></div>';
+            } else {
+                todaysTasks.slice(0, 5).forEach(t => {
+                    todayHtml += `
+                        <div class="flex justify-between items-center py-2.5 border-b border-gray-100 last:border-0">
+                            <div class="flex items-center gap-3">
+                                <span class="text-xl leading-none ${matrixColors[t.todoMatrix]}">•</span>
+                                <span class="text-sm font-bold text-gray-700">${t.name}</span>
+                            </div>
+                            <span class="text-xs text-gray-500 font-mono bg-gray-100 px-2 py-1 rounded-md">${t.startTime} - ${t.endTime}</span>
+                        </div>
+                    `;
+                });
+            }
+            document.getElementById('sumTodayTasks').innerHTML = todayHtml;
+
+            // 2. To-Do Matrix (ภาพรวมงานค้าง)
+            const pendingTodos = allItems.filter(i => i.itemType === 'todo' && !i.isCompleted);
+            document.getElementById('sumM4').innerText = pendingTodos.filter(i => i.todoMatrix === '4').length;
+            document.getElementById('sumM3').innerText = pendingTodos.filter(i => i.todoMatrix === '3').length;
+            document.getElementById('sumM2').innerText = pendingTodos.filter(i => i.todoMatrix === '2').length;
+            document.getElementById('sumM1').innerText = pendingTodos.filter(i => i.todoMatrix === '1').length;
+
+            // 3. Bucket โค้งสุดท้าย (เหลือน้อยกว่า 30 วัน)
+            const urgentBuckets = allItems.filter(i => (i.itemType === 'bucket' || !i.itemType) && !i.isCompleted && !i.isTBD && i.daysLeft <= 30)
+                                          .sort((a,b) => a.daysLeft - b.daysLeft);
+            
+            let bucketHtml = '';
+            if(urgentBuckets.length === 0) {
+                bucketHtml = '<div class="text-center py-6 bg-indigo-50 rounded-2xl border border-indigo-100"><p class="text-sm font-bold text-indigo-500">เป้าหมายทั้งหมดอยู่ในเกณฑ์ปกติ 🧘</p></div>';
+            } else {
+                urgentBuckets.slice(0, 4).forEach(b => {
+                    let dText = b.daysLeft < 0 ? `เลยกำหนด ${Math.abs(b.daysLeft)} วัน` : `เหลือ ${b.daysLeft} วัน`;
+                    let dColor = b.daysLeft < 0 ? 'text-red-500 bg-red-50' : 'text-orange-500 bg-orange-50';
+                    bucketHtml += `
+                        <div class="flex justify-between items-center py-2.5 border-b border-gray-100 last:border-0">
+                            <span class="text-sm font-bold text-gray-700 flex items-center gap-2"><span class="text-lg">🌟</span> ${b.name}</span>
+                            <span class="text-[10px] font-bold ${dColor} px-2 py-1 rounded-md tracking-wide">${dText}</span>
+                        </div>
+                    `;
+                });
+            }
+            document.getElementById('sumUrgentBuckets').innerHTML = bucketHtml;
+
+            // 4. สุขภาพการเงิน
+            const totalBudget = allItems.reduce((s, i) => s + Number(i.price || 0), 0);
+            const spentBudget = allItems.filter(i => i.isCompleted).reduce((s, i) => s + Number(i.price || 0), 0);
+            const budgetPercent = totalBudget === 0 ? 0 : Math.round((spentBudget/totalBudget)*100);
+
+            document.getElementById('sumBudgetTxt').innerText = `ใช้ไป ฿${spentBudget.toLocaleString()} / จากทั้งหมด ฿${totalBudget.toLocaleString()}`;
+            document.getElementById('sumBudgetPercent').innerText = `${budgetPercent}%`;
+            document.getElementById('sumBudgetBar').style.width = `${budgetPercent}%`;
+        }
+
+        // ==========================================
+        // 📝 Render List Page
+        // ==========================================
         window.renderItems = function() {
             const container = document.getElementById('bucketListContainer');
             const statusFilter = document.getElementById('filterStatus').value;
@@ -484,33 +622,13 @@
                 return matchStatus && matchType;
             });
 
-            // 🌟 ระบบจัดเรียงอัจฉริยะ (ผสมทั้ง Bucket และ Todo)
             filteredItems.sort((a, b) => {
-                let scoreA = 0, scoreB = 0;
-                
-                // คำนวณคะแนนของ A
-                if(a.itemType === 'todo') {
-                    // Todo ให้ความสำคัญตาม Eisenhower Matrix มากที่สุด
-                    scoreA = (Number(a.todoMatrix || 1) * 10) - (a.daysLeft > 0 ? a.daysLeft : 0);
-                } else {
-                    // Bucket ใช้สูตรเดิม
-                    scoreA = (Number(a.necessity) * 2) + (Number(a.impact) * 2) + (a.daysLeft <= 30 ? 5 : 0) + Number(a.possibility);
-                }
-
-                // คำนวณคะแนนของ B
-                if(b.itemType === 'todo') {
-                    scoreB = (Number(b.todoMatrix || 1) * 10) - (b.daysLeft > 0 ? b.daysLeft : 0);
-                } else {
-                    scoreB = (Number(b.necessity) * 2) + (Number(b.impact) * 2) + (b.daysLeft <= 30 ? 5 : 0) + Number(b.possibility);
-                }
-
-                // 1. เรียงคะแนนจากมากไปน้อย
+                let scoreA = a.itemType === 'todo' ? (Number(a.todoMatrix || 1) * 10) - Math.max(a.daysLeft, 0) : (Number(a.necessity) * 2) + (Number(a.impact) * 2) + (a.daysLeft <= 30 ? 5 : 0) + Number(a.possibility);
+                let scoreB = b.itemType === 'todo' ? (Number(b.todoMatrix || 1) * 10) - Math.max(b.daysLeft, 0) : (Number(b.necessity) * 2) + (Number(b.impact) * 2) + (b.daysLeft <= 30 ? 5 : 0) + Number(b.possibility);
                 if (scoreA !== scoreB) return scoreB - scoreA;
-                // 2. ถ้าระยะเวลาห่างกัน เอางานที่ใกล้วันกว่าขึ้น
                 const daysA = a.isTBD ? Infinity : a.daysLeft;
                 const daysB = b.isTBD ? Infinity : b.daysLeft;
                 if (daysA !== daysB) return daysA - daysB; 
-                // 3. ใช้เงินน้อยกว่าขึ้นก่อน
                 return Number(a.price) - Number(b.price);
             });
 
@@ -520,7 +638,7 @@
 
             container.innerHTML = '';
             if(filteredItems.length === 0) {
-                container.innerHTML = '<div class="col-span-full text-center py-10 text-gray-500 bg-white rounded-xl shadow-sm">ไม่พบข้อมูลในหมวดหมู่นี้</div>';
+                container.innerHTML = '<div class="col-span-full text-center py-10 text-gray-500 bg-white rounded-3xl border border-gray-100 shadow-sm">ไม่พบข้อมูลในหมวดหมู่นี้</div>';
                 return;
             }
 
@@ -528,40 +646,44 @@
                 const isDone = item.isCompleted;
                 const itemTypeStr = item.itemType || 'bucket';
 
-                // Badge เวลา
+                // Badge Date
                 let badgeHtml = '';
                 if (!item.isTBD && !isDone) {
-                    if (item.daysLeft < 0) badgeHtml = `<span class="bg-red-100 text-red-700 text-[10px] px-2 py-1 rounded-full font-bold shadow-sm">🚨 เลยกำหนด</span>`;
-                    else if (item.daysLeft === 0) badgeHtml = `<span class="bg-orange-100 text-orange-700 text-[10px] px-2 py-1 rounded-full font-bold shadow-sm">⏰ วันนี้!</span>`;
-                    else badgeHtml = `<span class="bg-blue-50 text-blue-600 text-[10px] px-2 py-1 rounded-full font-medium">เหลือ ${item.daysLeft} วัน</span>`;
+                    if (item.daysLeft < 0) badgeHtml = `<span class="bg-red-100 text-red-700 text-[10px] px-2 py-1 rounded-md font-bold">🚨 เลยกำหนด</span>`;
+                    else if (item.daysLeft === 0) badgeHtml = `<span class="bg-orange-100 text-orange-700 text-[10px] px-2 py-1 rounded-md font-bold">⏰ วันนี้!</span>`;
+                    else badgeHtml = `<span class="bg-blue-50 text-blue-600 text-[10px] px-2 py-1 rounded-md font-bold">เหลือ ${item.daysLeft} วัน</span>`;
                 } else if (isDone) {
-                    badgeHtml = `<span class="bg-green-100 text-green-700 text-[10px] px-2 py-1 rounded-full font-bold">✅ สำเร็จแล้ว</span>`;
+                    badgeHtml = `<span class="bg-green-100 text-green-700 text-[10px] px-2 py-1 rounded-md font-bold">✅ สำเร็จแล้ว</span>`;
                 } else {
-                    badgeHtml = `<span class="bg-gray-100 text-gray-600 text-[10px] px-2 py-1 rounded-full font-medium">⏳ รอเหตุการณ์</span>`;
+                    badgeHtml = `<span class="bg-gray-100 text-gray-500 text-[10px] px-2 py-1 rounded-md font-bold">⏳ รอเหตุการณ์</span>`;
                 }
 
-                // ข้อมูลประเภทงาน
-                const typeLabel = itemTypeStr === 'todo' ? '✅ To-Do' : '🌟 Bucket List';
+                const typeLabel = itemTypeStr === 'todo' ? '✅ To-Do' : '🌟 Bucket';
                 
-                // ข้อมูลวันเวลา
                 let timeDisplay = '';
                 if (itemTypeStr === 'todo' && item.specificDate) {
                     const dateObj = new Date(item.specificDate);
-                    timeDisplay = `${dateObj.toLocaleDateString('th-TH')} | 🕒 ${item.startTime || '-'} ถึง ${item.endTime || '-'}`;
+                    timeDisplay = `${dateObj.toLocaleDateString('th-TH')} | 🕒 ${item.startTime || '-'} - ${item.endTime || '-'}`;
                 } else {
                     timeDisplay = item.isTBD ? "รอเหตุการณ์ (TBD)" : `ภายใน ${item.timeNumber} ${unitLabels[item.timeUnit]}`;
                 }
 
-                // 🌟 ป้ายแสดงความสำคัญ (Eisenhower Matrix) สำหรับ To-Do
+                // 🌟 ป้ายแสดงความสำคัญ (Eisenhower)
                 let matrixBadge = '';
                 if (itemTypeStr === 'todo' && item.todoMatrix) {
                     let mColors = {
-                        "4": "bg-red-50 text-red-700 border-red-200",
-                        "3": "bg-orange-50 text-orange-700 border-orange-200",
-                        "2": "bg-yellow-50 text-yellow-700 border-yellow-200",
-                        "1": "bg-gray-50 text-gray-600 border-gray-200"
+                        "4": "bg-red-50 text-red-600 border-red-100",
+                        "3": "bg-orange-50 text-orange-600 border-orange-100",
+                        "2": "bg-yellow-50 text-yellow-600 border-yellow-100",
+                        "1": "bg-gray-50 text-gray-500 border-gray-100"
                     };
-                    matrixBadge = `<div class="mt-2 inline-block px-2 py-1 text-[11px] font-semibold border rounded-md ${mColors[item.todoMatrix]}">${matrixLabels[item.todoMatrix]}</div>`;
+                    matrixBadge = `<div class="mt-2 inline-block px-2 py-1 text-[10px] font-bold border rounded-md uppercase tracking-wider ${mColors[item.todoMatrix]}">${matrixLabels[item.todoMatrix]}</div>`;
+                }
+                
+                // 🔄 ป้ายแสดงว่าทำซ้ำ
+                if (itemTypeStr === 'todo' && item.todoRepeat && item.todoRepeat !== 'none') {
+                    let rLabel = { "daily": "ทุกวัน", "weekly": "ทุกสัปดาห์", "monthly": "ทุกเดือน" }[item.todoRepeat];
+                    matrixBadge += `<div class="mt-2 ml-1 inline-block px-2 py-1 text-[10px] font-bold border border-green-200 bg-green-50 text-green-700 rounded-md uppercase">🔄 ${rLabel}</div>`;
                 }
 
                 // 📈 Tracking UI
@@ -572,15 +694,15 @@
                         percent = Math.min((item.trackCurrent / item.trackTarget) * 100, 100).toFixed(0);
                         let barColor = percent >= 100 ? 'bg-green-500' : 'bg-blue-500';
                         trackingHtml = `
-                            <div class="mt-3 bg-gray-50 p-2.5 rounded-lg border border-gray-100">
-                                <div class="flex justify-between items-end mb-1">
+                            <div class="mt-4 bg-gray-50 p-3 rounded-2xl border border-gray-100">
+                                <div class="flex justify-between items-end mb-2">
                                     <span class="text-[11px] text-gray-500 font-bold uppercase tracking-wider">ความคืบหน้า</span>
-                                    <span class="text-xs font-bold text-gray-700">${Number(item.trackCurrent).toLocaleString()} / ${Number(item.trackTarget).toLocaleString()} <span class="text-gray-500 font-normal">${item.trackUnit}</span> (${percent}%)</span>
+                                    <span class="text-xs font-bold text-gray-700">${Number(item.trackCurrent).toLocaleString()} / ${Number(item.trackTarget).toLocaleString()} <span class="text-gray-400 font-normal">${item.trackUnit}</span> (${percent}%)</span>
                                 </div>
                                 <div class="w-full bg-gray-200 rounded-full h-2">
                                     <div class="${barColor} h-2 rounded-full transition-all duration-500" style="width: ${percent}%"></div>
                                 </div>
-                                ${!isDone ? `<button onclick="promptQuickUpdate('${item.id}',${item.trackCurrent})" class="text-[10px] text-blue-600 hover:text-blue-800 font-bold mt-2 flex items-center gap-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg> อัปเดตตัวเลข</button>` : ''}
+                                ${!isDone ? `<button onclick="promptQuickUpdate('${item.id}',${item.trackCurrent})" class="text-[10px] text-blue-600 hover:text-blue-800 font-bold mt-2.5 flex items-center gap-1 bg-blue-50 px-2 py-1 rounded-md transition"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg> อัปเดตตัวเลข</button>` : ''}
                             </div>
                         `;
                     } else if (item.trackType === 'checklist' && item.checklists && item.checklists.length > 0) {
@@ -592,18 +714,18 @@
                         let listHtml = '';
                         item.checklists.forEach((chk, idx) => {
                             listHtml += `
-                                <label class="flex items-start space-x-2 text-sm cursor-pointer mb-1 group">
-                                    <input type="checkbox" class="mt-1 rounded text-purple-600 focus:ring-purple-500" ${chk.isDone ? 'checked' : ''} onchange="toggleChecklistItem('${item.id}', ${idx}, this.checked)" ${isDone ? 'disabled' : ''}>
-                                    <span class="group-hover:text-purple-700 transition ${chk.isDone ? 'line-through text-gray-400' : 'text-gray-700'}">${chk.text}</span>
+                                <label class="flex items-start space-x-2 text-sm cursor-pointer mb-1.5 group">
+                                    <input type="checkbox" class="mt-1 rounded text-purple-600 focus:ring-purple-500 w-4 h-4" ${chk.isDone ? 'checked' : ''} onchange="toggleChecklistItem('${item.id}', ${idx}, this.checked)" ${isDone ? 'disabled' : ''}>
+                                    <span class="group-hover:text-purple-700 transition font-medium ${chk.isDone ? 'line-through text-gray-400' : 'text-gray-700'}">${chk.text}</span>
                                 </label>
                             `;
                         });
 
                         trackingHtml = `
-                            <div class="mt-3 bg-purple-50 p-2.5 rounded-lg border border-purple-100">
-                                <div class="flex justify-between items-end mb-2">
+                            <div class="mt-4 bg-purple-50 p-3 rounded-2xl border border-purple-100">
+                                <div class="flex justify-between items-end mb-2.5">
                                     <span class="text-[11px] text-purple-600 font-bold uppercase tracking-wider">ขั้นตอน</span>
-                                    <span class="text-xs font-bold text-gray-700">${doneChecks}/${totalChecks} (${percent}%)</span>
+                                    <span class="text-xs font-bold text-gray-700">${doneChecks}/${totalChecks} <span class="text-purple-400 font-normal">(${percent}%)</span></span>
                                 </div>
                                 <div class="w-full bg-gray-200 rounded-full h-1.5 mb-3">
                                     <div class="${barColor} h-1.5 rounded-full transition-all duration-500" style="width: ${percent}%"></div>
@@ -615,34 +737,34 @@
                 }
 
                 const card = `
-                    <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition p-5 border-l-4 ${isDone ? 'border-gray-400 completed-item' : (itemTypeStr === 'todo' ? 'border-green-400' : 'border-indigo-400')} relative flex flex-col h-full">
+                    <div class="bg-white rounded-3xl shadow-sm hover:shadow-md transition p-6 border-l-4 ${isDone ? 'border-gray-300 completed-item' : (itemTypeStr === 'todo' ? 'border-green-400' : 'border-indigo-400')} relative flex flex-col h-full border border-gray-100">
                         <div class="flex justify-between items-start mb-2">
                             <div>
-                                <h3 class="text-lg font-bold ${isDone ? 'line-through text-gray-500' : 'text-gray-800'} pr-2 leading-tight">${item.name}</h3>
+                                <h3 class="text-lg font-bold ${isDone ? 'line-through text-gray-400' : 'text-gray-800'} pr-2 leading-tight">${item.name}</h3>
                                 ${matrixBadge}
                             </div>
-                            <div class="flex flex-col items-end gap-1">
-                                <span class="bg-gray-100 text-gray-600 text-[10px] font-bold px-2 py-1 rounded-full">${typeLabel}</span>
+                            <div class="flex flex-col items-end gap-1.5">
+                                <span class="bg-gray-100 text-gray-500 text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wide">${typeLabel}</span>
                                 ${badgeHtml}
                             </div>
                         </div>
                         
-                        <div class="text-sm text-gray-600 space-y-1 mb-2 flex-grow mt-2">
-                            <p class="text-[12px] font-medium text-gray-500">📅 กำหนด: <span class="${itemTypeStr === 'todo' ? 'text-green-600' : 'text-indigo-600'}">${timeDisplay}</span></p>
-                            <p class="mt-1">💰 งบประมาณ: <span class="font-medium text-green-600">฿${Number(item.price).toLocaleString()}</span></p>
+                        <div class="text-sm text-gray-600 space-y-1 mb-2 flex-grow mt-3">
+                            <p class="text-[12px] font-bold text-gray-400 uppercase tracking-wider">📅 กำหนด: <span class="${itemTypeStr === 'todo' ? 'text-green-600' : 'text-indigo-600'}">${timeDisplay}</span></p>
+                            <p class="mt-1 font-bold text-gray-500">💰 งบประมาณ: <span class="text-green-600">฿${Number(item.price).toLocaleString()}</span></p>
                         </div>
                         
                         ${trackingHtml}
                         
-                        <div class="mt-auto border-t pt-3 mt-4 flex justify-between items-center">
+                        <div class="mt-auto border-t border-gray-100 pt-4 mt-5 flex justify-between items-center">
                             <div class="flex gap-4">
-                                <button onclick="openEditModal('${item.id}')" class="text-xs text-blue-500 hover:text-blue-700 font-medium flex items-center gap-1">
+                                <button onclick="openEditModal('${item.id}')" class="text-xs text-blue-500 hover:text-blue-700 font-bold flex items-center gap-1 bg-blue-50 px-2 py-1.5 rounded-md transition">
                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg> แก้ไข
                                 </button>
-                                <button onclick="deleteItem('${item.id}')" class="text-xs text-red-400 hover:text-red-600 font-medium">ลบทิ้ง</button>
+                                <button onclick="deleteItem('${item.id}')" class="text-xs text-red-400 hover:text-red-600 font-bold bg-red-50 px-2 py-1.5 rounded-md transition">ลบทิ้ง</button>
                             </div>
-                            <button onclick="toggleStatus('${item.id}', ${isDone})" class="text-xs px-3 py-1.5 rounded-full font-bold transition ${isDone ? 'bg-gray-200 text-gray-600' : 'bg-green-100 text-green-700 hover:bg-green-200'}">
-                                ${isDone ? 'ยกเลิกสถานะ' : '✅ เสร็จแล้ว!'}
+                            <button onclick="toggleStatus('${item.id}', ${isDone})" class="text-xs px-4 py-2 rounded-xl font-bold shadow-sm transition transform hover:-translate-y-0.5 ${isDone ? 'bg-gray-200 text-gray-600' : 'bg-green-500 text-white hover:bg-green-600'}">
+                                ${isDone ? 'ยกเลิก' : '✅ เสร็จแล้ว!'}
                             </button>
                         </div>
                     </div>
@@ -681,12 +803,12 @@
             document.getElementById('itemTracking').checked = false;
             document.getElementById('itemTracking').dispatchEvent(new Event('change'));
             
-            // รีเซ็ตเวลาเริ่มต้น
             document.getElementById('todoStartHour').value = '08';
             document.getElementById('todoStartMinute').value = '00';
             document.getElementById('todoEndHour').value = '09';
             document.getElementById('todoEndMinute').value = '00';
-            document.getElementById('todoMatrix').value = '4'; // เริ่มต้นที่สำคัญเร่งด่วน
+            document.getElementById('todoMatrix').value = '4';
+            document.getElementById('todoRepeat').value = 'none'; // Reset Repeat
 
             toggleModal('mainModal');
         }
@@ -705,7 +827,6 @@
             document.getElementById('itemName').value = item.name;
             document.getElementById('itemPrice').value = item.price;
             
-            // เซ็ตข้อมูล Bucket List
             document.getElementById('itemNecessity').value = item.necessity || '2';
             document.getElementById('itemImpact').value = item.impact || '2';
             document.getElementById('itemPossibility').value = item.possibility || '2';
@@ -713,9 +834,10 @@
             document.getElementById('timeNumber').value = item.timeNumber || 1;
             document.getElementById('timeUnit').value = item.timeUnit || 'weeks';
             
-            // เซ็ตข้อมูล To-Do List
             document.getElementById('todoMatrix').value = item.todoMatrix || '4';
             document.getElementById('todoDate').value = item.specificDate || "";
+            document.getElementById('todoRepeat').value = item.todoRepeat || 'none'; // โหลดค่าทำซ้ำ
+
             if(item.startTime) {
                 const sParts = item.startTime.split(':');
                 document.getElementById('todoStartHour').value = sParts[0] || '08';
@@ -742,9 +864,7 @@
             const chkContainer = document.getElementById('checklistContainer');
             chkContainer.innerHTML = '';
             if (item.trackType === 'checklist' && item.checklists) {
-                item.checklists.forEach(chk => {
-                    addChecklistItem(chk.text, chk.isDone);
-                });
+                item.checklists.forEach(chk => { addChecklistItem(chk.text, chk.isDone); });
             } else if (isTracking && item.trackType === 'checklist') {
                 addChecklistItem();
             }
@@ -753,7 +873,62 @@
         }
 
         // ==========================================
-        // การบันทึกเข้า Firebase + ยิงเข้า Calendar
+        // 🔄 ฟังก์ชันสลับสถานะ และระบบ ทำซ้ำ (Recurring) อัตโนมัติ
+        // ==========================================
+        window.toggleStatus = async function(id, currentStatus) {
+            const item = allItems.find(i => i.id === id);
+            if (!item) return;
+
+            try {
+                // ถ้าเป็นการกด "✅ เสร็จแล้ว" และรายการนี้ตั้งค่าให้ "ทำซ้ำ" (todoRepeat !== 'none')
+                if (!currentStatus && item.itemType === 'todo' && item.todoRepeat && item.todoRepeat !== 'none') {
+                    
+                    // 1. เปลี่ยนตัวปัจจุบันให้เป็นเสร็จแล้ว
+                    await updateDoc(doc(db, "bucketlist", id), { isCompleted: true });
+                    
+                    // 2. คำนวณวันที่ถัดไปสำหรับการทำซ้ำ
+                    let nextDate = new Date(item.specificDate);
+                    if(item.todoRepeat === 'daily') nextDate.setDate(nextDate.getDate() + 1);
+                    if(item.todoRepeat === 'weekly') nextDate.setDate(nextDate.getDate() + 7);
+                    if(item.todoRepeat === 'monthly') nextDate.setMonth(nextDate.getMonth() + 1);
+                    
+                    // Format วันที่ให้ถูกต้องตาม Timezone ไทย
+                    const offset = nextDate.getTimezoneOffset() * 60000;
+                    const nextDateString = (new Date(nextDate - offset)).toISOString().split('T')[0];
+
+                    // 3. เตรียมข้อมูลสำหรับตัวใหม่ที่จะโคลน
+                    const cloneData = { ...item };
+                    delete cloneData.id; 
+                    delete cloneData.daysLeft; 
+                    
+                    cloneData.isCompleted = false; // ทำให้สถานะรอทำเหมือนเดิม
+                    cloneData.createdAt = new Date().toISOString();
+                    cloneData.specificDate = nextDateString; // อัปเดตวันใหม่
+                    
+                    // รีเซ็ต Tracking ถ้ามี
+                    if(cloneData.isTracking && cloneData.trackType === 'numeric') {
+                        cloneData.trackCurrent = 0;
+                    } else if (cloneData.isTracking && cloneData.trackType === 'checklist') {
+                        cloneData.checklists = cloneData.checklists.map(c => ({...c, isDone: false}));
+                    }
+
+                    // 4. บันทึกตัวใหม่ลงฐานข้อมูล
+                    await addDoc(colRef, cloneData);
+                    console.log("สร้างรายการทำซ้ำรอบใหม่สำเร็จ!");
+                    
+                } else {
+                    // ปรับสถานะธรรมดา
+                    await updateDoc(doc(db, "bucketlist", id), { isCompleted: !currentStatus });
+                }
+                
+                loadItemsFromDB(); 
+            } catch (error) {
+                console.error("Error updating status:", error);
+            }
+        };
+
+        // ==========================================
+        // บันทึกเข้า Firebase + ยิงเข้า Calendar
         // ==========================================
         document.getElementById('bucketForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -771,8 +946,8 @@
             const startTime = `${document.getElementById('todoStartHour').value}:${document.getElementById('todoStartMinute').value}`;
             const endTime = `${document.getElementById('todoEndHour').value}:${document.getElementById('todoEndMinute').value}`;
             const todoMatrix = document.getElementById('todoMatrix').value;
+            const todoRepeat = document.getElementById('todoRepeat').value;
             
-            // 📈 ดึงข้อมูล Tracking
             const isTracking = document.getElementById('itemTracking').checked;
             const trackType = document.getElementById('trackType').value;
             const checklists = [];
@@ -802,7 +977,7 @@
                 price: Number(document.getElementById('itemPrice').value),
                 itemType: itemType,
                 
-                // สำหรับ Bucket List
+                // สำหรับ Bucket
                 necessity: Number(document.getElementById('itemNecessity').value),
                 impact: Number(document.getElementById('itemImpact').value),
                 possibility: Number(document.getElementById('itemPossibility').value),
@@ -811,11 +986,12 @@
                 isTBD: isTBD,
                 calculatedDays: calculatedDays,
                 
-                // สำหรับ To-Do List
+                // สำหรับ To-Do
                 todoMatrix: todoMatrix,
                 specificDate: specificDate,
                 startTime: startTime,
                 endTime: endTime,
+                todoRepeat: todoRepeat,
 
                 // Tracking
                 isTracking: isTracking,
@@ -834,7 +1010,6 @@
                     data.createdAt = new Date().toISOString();
                     await addDoc(colRef, data);
 
-                    // 🔥 ยิง API ปัก Calendar
                     if ((itemType === 'todo' && specificDate && startTime) || (itemType === 'bucket' && !isTBD)) {
                         fetch(GAS_CALENDAR_URL, {
                             method: "POST",
@@ -870,11 +1045,7 @@
             }
         };
 
-        window.toggleStatus = async function(id, currentStatus) {
-            await updateDoc(doc(db, "bucketlist", id), { isCompleted: !currentStatus });
-            loadItemsFromDB(); 
-        };
-
+        // เริ่มโหลดข้อมูลครั้งแรก
         loadItemsFromDB();
     </script>
 
