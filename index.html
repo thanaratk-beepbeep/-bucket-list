@@ -31,7 +31,6 @@
 
         <!-- 🌟 แถบเมนูนำทางหลัก (Navigation) -->
         <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6 bg-white p-3 rounded-2xl shadow-sm border border-gray-100">
-            
             <div class="flex w-full md:w-auto gap-2">
                 <button onclick="switchView('summary')" class="flex-1 md:flex-none bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-600 hover:to-teal-500 text-white font-bold py-2 px-6 rounded-full shadow-md transition transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
                     📊 หน้าสรุป
@@ -49,16 +48,13 @@
         </div>
 
         <!-- ========================================== -->
-        <!-- 📊 VIEW 1: SUMMARY DASHBOARD (หน้าแรก) -->
+        <!-- 📊 VIEW 1: SUMMARY DASHBOARD -->
         <!-- ========================================== -->
         <div id="summaryView" class="grid grid-cols-1 md:grid-cols-2 gap-5 animate-pop pb-10">
-            
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-full h-1.5 bg-green-400"></div>
                 <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">☀️ ภารกิจวันนี้</h3>
-                <div id="sumTodayTasks" class="space-y-3">
-                    <p class="text-gray-400 text-center py-4">กำลังโหลดข้อมูล...</p>
-                </div>
+                <div id="sumTodayTasks" class="space-y-3"><p class="text-gray-400 text-center py-4">กำลังโหลดข้อมูล...</p></div>
             </div>
 
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden">
@@ -87,9 +83,7 @@
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-full h-1.5 bg-indigo-400"></div>
                 <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">🎯 Bucket โค้งสุดท้าย</h3>
-                <div id="sumUrgentBuckets" class="space-y-3">
-                    <p class="text-gray-400 text-center py-4">กำลังโหลดข้อมูล...</p>
-                </div>
+                <div id="sumUrgentBuckets" class="space-y-3"><p class="text-gray-400 text-center py-4">กำลังโหลดข้อมูล...</p></div>
             </div>
 
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden flex flex-col justify-center">
@@ -106,7 +100,7 @@
         </div>
 
         <!-- ========================================== -->
-        <!-- 📝 VIEW 2: LIST VIEW (ดูรายการทั้งหมด/ย่อย) -->
+        <!-- 📝 VIEW 2: LIST VIEW -->
         <!-- ========================================== -->
         <div id="listView" class="hidden animate-pop pb-10">
             <div class="flex justify-end mb-4">
@@ -116,12 +110,10 @@
                     <option value="completed">✅ สำเร็จแล้ว</option>
                 </select>
             </div>
-
             <div id="bucketListContainer" class="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div class="col-span-full text-center py-10 text-gray-400" id="loadingText">กำลังโหลดข้อมูล...</div>
             </div>
         </div>
-
     </div>
 
     <!-- 🌟 Modal สำหรับ Quick Win -->
@@ -163,7 +155,6 @@
                 <form id="bucketForm" class="space-y-4 mt-5">
                     <input type="hidden" id="editId" value="">
 
-                    <!-- ตัวเลือกประเภท Bucket / To-Do -->
                     <div class="bg-indigo-50 p-1.5 rounded-xl border border-indigo-100 flex gap-1">
                         <label class="flex-1 text-center cursor-pointer">
                             <input type="radio" name="itemType" value="bucket" class="peer hidden" checked>
@@ -288,7 +279,6 @@
                         </div>
                     </div>
 
-                    <!-- 📈 ระบบ Tracking -->
                     <div class="bg-blue-50 p-4 rounded-2xl border border-blue-200 shadow-sm transition-all duration-300">
                         <label class="flex items-center space-x-2 text-sm text-blue-800 font-bold cursor-pointer">
                             <input type="checkbox" id="itemTracking" class="rounded text-blue-600 focus:ring-blue-500 w-5 h-5">
@@ -364,16 +354,12 @@
         let currentTypeFilter = 'all';
         const unitLabels = { "weeks": "สัปดาห์", "months": "เดือน", "years": "ปี" };
         const matrixLabels = {
-            "4": "🔥 สำคัญ + เร่งด่วน",
-            "3": "⭐ สำคัญ + ไม่เร่งด่วน",
-            "2": "⚡ ไม่สำคัญ + เร่งด่วน",
-            "1": "☁️ ไม่สำคัญ + ไม่เร่งด่วน"
+            "4": "🔥 สำคัญ + เร่งด่วน", "3": "⭐ สำคัญ + ไม่เร่งด่วน", "2": "⚡ ไม่สำคัญ + เร่งด่วน", "1": "☁️ ไม่สำคัญ + ไม่เร่งด่วน"
         };
         const matrixColors = {
             "4": "text-red-500", "3": "text-orange-500", "2": "text-yellow-500", "1": "text-gray-400"
         };
 
-        // ------------------ Initialize Time Dropdowns ------------------
         let hourOptions = '';
         for(let i = 0; i < 24; i++) {
             let hr = i.toString().padStart(2, '0');
@@ -384,7 +370,16 @@
         document.getElementById('todoStartHour').value = '08';
         document.getElementById('todoEndHour').value = '09';
 
-        // ------------------ Views & Navigation Logic ------------------
+        // 🚀 ฟังก์ชันเรียกอัปเดตหน้าจอโดยไม่ต้องดึง Firebase ใหม่
+        function refreshUI() {
+            if(!document.getElementById('summaryView').classList.contains('hidden')) {
+                renderSummary();
+            } else {
+                renderItems();
+            }
+        }
+
+        // 🛑 สลับหน้าจอดึงข้อมูลจาก Memory (ไม่เปลืองโควต้า Firebase)
         window.switchView = function(view, filterType = 'all') {
             ['nav-all', 'nav-bucket', 'nav-todo'].forEach(id => {
                 document.getElementById(id).className = "flex-1 px-5 py-2 text-sm font-medium rounded-full text-gray-500 hover:text-gray-800 transition";
@@ -393,17 +388,16 @@
             if (view === 'summary') {
                 document.getElementById('summaryView').classList.remove('hidden');
                 document.getElementById('listView').classList.add('hidden');
-                renderSummary();
+                renderSummary(); 
             } else {
                 document.getElementById('summaryView').classList.add('hidden');
                 document.getElementById('listView').classList.remove('hidden');
                 document.getElementById(`nav-${filterType}`).className = "flex-1 px-5 py-2 text-sm font-bold rounded-full bg-white shadow-sm text-indigo-600 transition";
                 currentTypeFilter = filterType;
-                renderItems();
+                renderItems(); 
             }
         };
 
-        // ------------------ Quick Win Feature ------------------
         window.suggestQuickWin = function() {
             const quickWins = allItems.filter(item => {
                 if(item.isCompleted || Number(item.price) > 1000) return false;
@@ -422,17 +416,23 @@
             if (document.getElementById('quickWinModal').classList.contains('opacity-0')) toggleModal('quickWinModal');
         };
 
+        // 🛑 อัปเดต Memory แทนการโหลด Firebase ใหม่
         window.doQuickWinNow = async function() {
             const id = document.getElementById('qwCurrentId').value;
             if(!id) return;
             try {
-                await toggleStatus(id, false); 
+                await updateDoc(doc(db, "bucketlist", id), { isCompleted: true });
+                const itemIndex = allItems.findIndex(i => i.id === id);
+                if (itemIndex !== -1) allItems[itemIndex].isCompleted = true; // อัปเดต Memory
+                
                 toggleModal('quickWinModal');
-                setTimeout(() => { alert("เก่งมากครับ! 🎉 เป็นก้าวเล็กๆ ที่ยอดเยี่ยม"); }, 300);
+                setTimeout(() => { 
+                    alert("เก่งมากครับ! 🎉 เป็นก้าวเล็กๆ ที่ยอดเยี่ยม"); 
+                    refreshUI(); // อัปเดต UI จาก Memory
+                }, 300);
             } catch (error) { console.error(error); }
         };
 
-        // ------------------ UI Event Listeners ------------------
         document.querySelectorAll('input[name="itemType"]').forEach(radio => {
             radio.addEventListener('change', function() {
                 if (this.value === 'todo') {
@@ -484,7 +484,6 @@
             container.appendChild(li);
         };
 
-        // ------------------ Core Logic ------------------
         function calculateDaysLeft(createdAt, calculatedDays, isTBD, specificDate, itemType) {
             if (itemType === 'todo') {
                 if(!specificDate) return Infinity;
@@ -499,6 +498,7 @@
             }
         }
 
+        // 🛑 โหลด Firebase ครั้งเดียวตอนเปิดเว็บเท่านั้น!
         async function loadItemsFromDB() {
             try {
                 const querySnapshot = await getDocs(colRef);
@@ -508,18 +508,13 @@
                     data.daysLeft = calculateDaysLeft(data.createdAt, data.calculatedDays, data.isTBD, data.specificDate, data.itemType);
                     allItems.push({ id: docSnap.id, ...data });
                 });
-                
-                if(!document.getElementById('summaryView').classList.contains('hidden')) {
-                    renderSummary();
-                } else {
-                    renderItems();
-                }
+                refreshUI();
             } catch (error) {
                 console.error("Firebase Error:", error);
                 const errorMsg = `
                     <div class="col-span-full text-center py-10 bg-red-50 rounded-3xl border border-red-100 mt-4">
                         <p class="text-red-500 font-bold text-xl mb-2">⚠️ ไม่สามารถเชื่อมต่อฐานข้อมูลได้</p>
-                        <p class="text-red-400 text-sm">1. ลืมใส่ API Keys ของ Firebase หรือเปล่า?<br>2. กฎ Firebase (Rules) อาจจะหมดอายุ 30 วัน</p>
+                        <p class="text-red-400 text-sm">ตรวจสอบ API Keys หรือ กฎ Firebase (Rules)</p>
                     </div>`;
                 document.getElementById('summaryView').innerHTML = errorMsg;
                 document.getElementById('bucketListContainer').innerHTML = errorMsg;
@@ -536,7 +531,6 @@
             const offset = new Date().getTimezoneOffset() * 60000;
             const todayStr = new Date(Date.now() - offset).toISOString().split('T')[0];
 
-            // 1. ภารกิจวันนี้
             const todaysTasks = allItems.filter(i => i.itemType === 'todo' && i.specificDate === todayStr && !i.isCompleted)
                                         .sort((a, b) => b.todoMatrix - a.todoMatrix);
             
@@ -558,14 +552,12 @@
             }
             document.getElementById('sumTodayTasks').innerHTML = todayHtml;
 
-            // 2. To-Do Matrix 
             const pendingTodos = allItems.filter(i => i.itemType === 'todo' && !i.isCompleted);
             document.getElementById('sumM4').innerText = pendingTodos.filter(i => String(i.todoMatrix) === '4').length;
             document.getElementById('sumM3').innerText = pendingTodos.filter(i => String(i.todoMatrix) === '3').length;
             document.getElementById('sumM2').innerText = pendingTodos.filter(i => String(i.todoMatrix) === '2').length;
             document.getElementById('sumM1').innerText = pendingTodos.filter(i => String(i.todoMatrix) === '1').length;
 
-            // 3. Bucket โค้งสุดท้าย
             const urgentBuckets = allItems.filter(i => (i.itemType === 'bucket' || !i.itemType) && !i.isCompleted && !i.isTBD && !isNaN(i.daysLeft) && i.daysLeft <= 30)
                                           .sort((a,b) => a.daysLeft - b.daysLeft);
             
@@ -586,7 +578,6 @@
             }
             document.getElementById('sumUrgentBuckets').innerHTML = bucketHtml;
 
-            // 4. สุขภาพการเงิน
             const totalBudget = allItems.reduce((s, i) => s + Number(i.price || 0), 0);
             const spentBudget = allItems.filter(i => i.isCompleted).reduce((s, i) => s + Number(i.price || 0), 0);
             const budgetPercent = totalBudget === 0 ? 0 : Math.round((spentBudget/totalBudget)*100);
@@ -617,11 +608,6 @@
                 if (daysA !== daysB) return daysA - daysB; 
                 return Number(a.price) - Number(b.price);
             });
-
-            // 🛑 จุดที่แก้ Error: ถ้าหากล่องสถิติเหล่านี้เจอถึงจะทำบรรทัดพวกนี้ (ป้องกันแอปดับเวลาสลับแท็บ)
-            if(document.getElementById('statTotal')) {
-                /* (บรรทัดพวกนี้ถูกเอาออกจากการแสดงผลแล้ว แต่เขียนดักไว้เผื่ออนาคตครับ) */
-            }
 
             container.innerHTML = '';
             if(filteredItems.length === 0) {
@@ -756,20 +742,24 @@
             });
         };
 
+        // 🛑 อัปเดตข้อมูล Tracking ลง Memory โดยตรง ไม่ต้องโหลด Firebase ใหม่
         window.promptQuickUpdate = async function(id, currentVal) {
             const newVal = prompt("อัปเดตตัวเลขความคืบหน้าล่าสุด:", currentVal);
             if (newVal !== null && newVal !== "" && !isNaN(newVal)) {
                 await updateDoc(doc(db, "bucketlist", id), { trackCurrent: Number(newVal) });
-                loadItemsFromDB();
+                const itemIndex = allItems.findIndex(i => i.id === id);
+                if (itemIndex !== -1) allItems[itemIndex].trackCurrent = Number(newVal);
+                refreshUI();
             }
         };
 
+        // 🛑 อัปเดต Checklists ลง Memory โดยตรง ไม่ต้องโหลด Firebase ใหม่
         window.toggleChecklistItem = async function(id, checkIndex, isDone) {
             const item = allItems.find(i => i.id === id);
             if(item && item.checklists) {
                 item.checklists[checkIndex].isDone = isDone;
                 await updateDoc(doc(db, "bucketlist", id), { checklists: item.checklists });
-                renderItems(); 
+                refreshUI(); 
             }
         };
 
@@ -855,13 +845,16 @@
             toggleModal('mainModal');
         }
 
+        // 🛑 อัปเดตสถานะ (เสร็จ/ไม่เสร็จ) ลง Memory โดยตรง 
         window.toggleStatus = async function(id, currentStatus) {
-            const item = allItems.find(i => i.id === id);
-            if (!item) return;
+            const itemIndex = allItems.findIndex(i => i.id === id);
+            if (itemIndex === -1) return;
+            const item = allItems[itemIndex];
 
             try {
                 if (!currentStatus && item.itemType === 'todo' && item.todoRepeat && item.todoRepeat !== 'none') {
                     await updateDoc(doc(db, "bucketlist", id), { isCompleted: true });
+                    allItems[itemIndex].isCompleted = true; // อัปเดต Memory
                     
                     let nextDate = new Date(item.specificDate);
                     if(item.todoRepeat === 'daily') nextDate.setDate(nextDate.getDate() + 1);
@@ -885,17 +878,25 @@
                         cloneData.checklists = cloneData.checklists.map(c => ({...c, isDone: false}));
                     }
 
-                    await addDoc(colRef, cloneData);
+                    const docRef = await addDoc(colRef, cloneData);
+                    
+                    // คำนวณวันเหลือแล้วยัดตัวใหม่ใส่ Memory ทันที
+                    cloneData.id = docRef.id;
+                    cloneData.daysLeft = calculateDaysLeft(cloneData.createdAt, cloneData.calculatedDays, cloneData.isTBD, cloneData.specificDate, cloneData.itemType);
+                    allItems.push(cloneData);
+
                 } else {
                     await updateDoc(doc(db, "bucketlist", id), { isCompleted: !currentStatus });
+                    allItems[itemIndex].isCompleted = !currentStatus; // อัปเดต Memory
                 }
                 
-                loadItemsFromDB(); 
+                refreshUI(); // อัปเดต UI ทันที
             } catch (error) {
                 console.error("Error updating status:", error);
             }
         };
 
+        // 🛑 เพิ่ม/แก้ไขข้อมูล จัดการอัปเดตลง Memory ทันที
         document.getElementById('bucketForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
@@ -967,33 +968,43 @@
 
             try {
                 if (editId) {
+                    const existingItem = allItems.find(i => i.id === editId);
+                    data.createdAt = existingItem.createdAt;
+                    data.isCompleted = existingItem.isCompleted;
+                    
                     await updateDoc(doc(db, "bucketlist", editId), data);
+                    
+                    // อัปเดต Memory
+                    data.daysLeft = calculateDaysLeft(data.createdAt, data.calculatedDays, data.isTBD, data.specificDate, data.itemType);
+                    const index = allItems.findIndex(i => i.id === editId);
+                    allItems[index] = { id: editId, ...data };
+
                 } else {
                     data.isCompleted = false;
                     data.createdAt = new Date().toISOString();
-                    await addDoc(colRef, data);
+                    
+                    const docRef = await addDoc(colRef, data);
+                    
+                    // อัปเดต Memory
+                    data.daysLeft = calculateDaysLeft(data.createdAt, data.calculatedDays, data.isTBD, data.specificDate, data.itemType);
+                    allItems.push({ id: docRef.id, ...data });
 
+                    // ยิง Calendar 
                     if ((itemType === 'todo' && specificDate && startTime) || (itemType === 'bucket' && !isTBD)) {
                         fetch(GAS_CALENDAR_URL, {
                             method: "POST",
                             headers: { "Content-Type": "text/plain;charset=utf-8" },
                             body: JSON.stringify({
-                                name: data.name,
-                                price: data.price,
-                                necessity: data.necessity,
-                                itemType: data.itemType,
-                                isTBD: data.isTBD,
-                                targetDate: exactTargetDate, 
-                                specificDate: data.specificDate, 
-                                startTime: data.startTime,
-                                endTime: data.endTime
+                                name: data.name, price: data.price, necessity: data.necessity,
+                                itemType: data.itemType, isTBD: data.isTBD, targetDate: exactTargetDate, 
+                                specificDate: data.specificDate, startTime: data.startTime, endTime: data.endTime
                             })
                         }).catch(e => console.log("Calendar sync failed", e));
                     }
                 }
                 
                 toggleModal('mainModal');
-                loadItemsFromDB(); 
+                refreshUI(); // อัปเดตหน้าจอ ไม่โหลด Firebase ใหม่
             } catch (error) {
                 alert("บันทึกไม่สำเร็จ");
             } finally {
@@ -1001,14 +1012,16 @@
             }
         });
 
+        // 🛑 ลบข้อมูล อัปเดตลง Memory ทันที
         window.deleteItem = async function(id) {
             if(confirm("ลบรายการนี้ใช่ไหม?")) {
                 await deleteDoc(doc(db, "bucketlist", id));
-                loadItemsFromDB();
+                allItems = allItems.filter(i => i.id !== id); // ลบออกจาก Memory
+                refreshUI(); 
             }
         };
 
-        // โหลดข้อมูลเมื่อเปิดเว็บ
+        // โหลดข้อมูลเมื่อเปิดเว็บ (โหลดแค่ครั้งเดียวตลอดการเปิดหน้าเว็บ)
         loadItemsFromDB();
     </script>
 
